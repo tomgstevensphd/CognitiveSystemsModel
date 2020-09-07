@@ -23,7 +23,7 @@
         for elmsymlist in pcvarlist
         do
         (when (listp elmsymlist)
-        (setf elmsyms (append elmsyms (list (my-make-symbol (car elmsymlist)))))
+        (setf elmsyms (append elmsyms (list (my-make-cs-symbol (car elmsymlist)))))
         ))))
     ;;make the elmsym combos list from locall elmsym vars  
     (multiple-value-bind (sym n-combos combos)

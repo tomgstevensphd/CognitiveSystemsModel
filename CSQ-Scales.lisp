@@ -139,68 +139,6 @@
 
 
 
-;;TO FIND SCALE QUESTION QVARS ------------------------------
-
-;;FIND-QVARS-FOR-SCALE 
-;;
-;;ddd
-(defun find-qvars-for-scale (all-qvar-list scale-sym)
-  "In CSQ-Scales"
-  (let
-      ((target-scale-list)
-       (qvar)
-       (quest)
-       (qnum)
-       (qvars)
-       (quests)
-       (quest-str)
-       (quest-strs)
-       (num-qs 0)
-       (num-qvar-Qs)
-       )
-    ;;FIND TARGET-SCALE-LIST
-    (loop
-     for scale-list in all-qvar-list
-     do
-     (when (equal (car scale-list) scale-sym)
-       (setf target-scale-list scale-list)
-       (return))
-     )
-    
-    (loop
-     for item in target-scale-list
-     do
-     (when (listp item)
-       (incf num-qs)
-       (setf qvar-str (car item)
-             qvar (my-make-symbol qvar-str)
-             in-list (fifth item))
-       (when (listp in-list)
-         (setf qnum (my-make-symbol (second in-list))
-               quest-str (third in-list)
-               quest (my-make-symbol quest-str)))
-       (setf qvars (append qvars (list qvar))
-             quests (append quests (list quest))
-             quest-strs (append quest-strs (list quest-str))
-             num-qvar-Qs (append num-qvar-Qs (list (list qvar qnum qvar-str quest))))
-       ;;end outer when
-       )
-     ;;end loop
-     )
-    (values qvars quests num-qvar-Qs num-qs)
-    ;;let, find-qvars-for-scale
-    ))
-;;TEST
-;; USE DATA IN SCALES BELOW
-#|CL-USER 32 > (find-qvars-for-scale *all-pc-elements 'pce-people)
-(MOTHER FATHER BEST-M-FRIEND BEST-F-FRIEND M-DISLIKE F-DISLIKE M-ADMIRE F-ADMIRE PER-MOSTFUN PER-ROMANCE ROLE-MODEL CHILD-FRIEND CHILD-DISLIKE WORK-FRIEND WORK-PER-DISLIKE FAV-BOSS WORST-BOSS FAV-M-STAR FAV-POLITICO FAV-TEACHER WORST-BOSS FAV-SPIRITUAL DIS-TEACHER)
-(MOTHERQ FATHERQ BEST-M-FRIENDQ BEST-F-FRIENDQ M-DISLIKEQ F-DISLIKEQ M-ADMIREQ F-ADMIREQ PER-MOSTFUNQ PER-ROMANCEQ ROLE-MODELQ CHILD-FRIENDQ CHILD-DISLIKEQ WORK-FRIENDQ WORK-PER-DISLIKEQ FAV-BOSSQ WORST-BOSSQ FAV-M-STARQ FAV-POLITICOQ FAV-TEACHERQ WORST-BOSSQ FAV-SPIRITUALQ DIS-TEACHERQ)
-((MOTHER 1 "mother" MOTHERQ) (FATHER 2 "father" FATHERQ) (BEST-M-FRIEND 3 "best-m-friend" BEST-M-FRIENDQ) (BEST-F-FRIEND 4 "best-f-friend" BEST-F-FRIENDQ) (M-DISLIKE 5 "m-dislike" M-DISLIKEQ) (F-DISLIKE 6 "f-dislike" F-DISLIKEQ) (M-ADMIRE 7 "m-admire" M-ADMIREQ) (F-ADMIRE 8 "f-admire" F-ADMIREQ) (PER-MOSTFUN 9 "per-mostfun" PER-MOSTFUNQ) (PER-ROMANCE 10 "per-romance" PER-ROMANCEQ) (ROLE-MODEL 11 "role-model" ROLE-MODELQ) (CHILD-FRIEND 12 "child-friend" CHILD-FRIENDQ) (CHILD-DISLIKE 13 "child-dislike" CHILD-DISLIKEQ) (WORK-FRIEND 14 "work-friend" WORK-FRIENDQ) (WORK-PER-DISLIKE 15 "work-per-dislike" WORK-PER-DISLIKEQ) (FAV-BOSS 16 "fav-boss" FAV-BOSSQ) (WORST-BOSS 17 "worst-boss" WORST-BOSSQ) (FAV-M-STAR 18 "fav-m-star" FAV-M-STARQ) (FAV-POLITICO 19 "fav-politico" FAV-POLITICOQ) (FAV-TEACHER 20 "fav-teacher" FAV-TEACHERQ) (WORST-BOSS 21 "worst-boss" WORST-BOSSQ) (FAV-SPIRITUAL 22 "fav-spiritual" FAV-SPIRITUALQ) (DIS-TEACHER 23 "dis-teacher" DIS-TEACHERQ))
-23|#
-
-
-
-
 
 ;;============= SHAQ EXAMPLES ========================
 ;;EG FOR CATEGORY CLASSES

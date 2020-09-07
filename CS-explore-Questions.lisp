@@ -1,15 +1,23 @@
-;;*********************** CS-explore.lisp ******************************
+;;*********************** CS-explore-questions.lisp ******************************
 ;;
 ;;NOTES:
-#| SEE CS-NOTES.lisp
+
+;;CURRENT *ALL-CSQ-QUESTIONS = see file: CSQ-Questions.lisp
+;;FORMAT
+;; SINGLE-SELECTION QUESTION EG. 
+;; ( THEMES
+;;   INSTRS, first list after THEMES
+;;       (THM-INSTR ("LIFE THEMES and VALUES:" "HOW IMPORTANT is this is to you?"))
+;; (THMMENCHQ     ("MENTAL CHALLENGE: Be mentally challenged with difficult and/or creative mental tasks.")     THM-INSTR     THM32MENTALCHALQ)
+;;
+;;MULTI-SELECTION (MULTI-ITEM) QUESTION EG.
+;; Questions found in original QVAR list
+;; (UTYPE    (TKNOWMORQ NO-QUEST-STRING-FOUND)   (TEXPERIEQ NO-QUEST-STRING-FOUND)  .  .  .   (WANTSPQQ NO-QUEST-STRING-FOUND)   (WANTSPQQ NO-QUEST-STRING-FOUND))
 
 
 
 
 
-
-
-|#
 #|
 (defparameter *TEST-PC-element-qvars
   '((PCE-PEOPLE
@@ -23,84 +31,86 @@
 )))
 |#
 
-(defparameter *cs-explore-phrase nil  "Symbol or name of CS or PC being explored by CS-Explore")
+(defparameter *cs-explore-phrase nil  "Phrase describing CS or PC being explored by CS-Explore--used in question text.")
 
-;;SSS START HERE REFINE THESE CATEGORIES/QUESTIONS, THEN CHANGE QVARS TOO
+;;  REFINE THESE CATEGORIES/QUESTIONS, THEN CHANGE QVARS TOO
 (defparameter  *All-CS-exploreQs                           ;;like *All-PCE-elementQs
   '( (CS-DECLARATIVE
       ;;(instr-symbol (frame-title  frame-instrs) 
-      (CS-DECLARATIVE ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
+      (CS-DECLARATIVE-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box to right below:     ") ))  ;;*CS-PC-current) 
       ;;was (format nil  "Associations with the word, class, concept, or instance=> ~A."  *cs-explore-phrase)
-      (ISAQ  ((format nil "What kind(s) or type(s) is ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-      (PARTQ  ( (format nil "List the most important members or parts of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-      (WHYQ  ((format nil "  ~A: Why is it important or why does it exist?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (CAUSEQ  ((format nil "What caused  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (EVIDENCEQ  ( (format nil "What is the evidence for  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (HOWQ  ( (format nil "What are important steps or ways to  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (EXAMPLEQ  ( (format nil "Give a good example or instance of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (FEATUREQ  ( (format nil "What are the main features or characteristics of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (STEREOTYPEQ  ((format nil "What are other (features/chars.) of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (REGNANTQ  ((format nil " ~A almost always or exclusively associated with WHAT?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
-      (PROTOTYPEQ  ( (format nil "What example best demonstrates the essence of/most features of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
+      (ISAQ  ((format nil "What kind(s) or type(s) is ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      (PARTQ  ( (format nil "List the most important members or parts of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      (WHYQ  ((format nil "  ~A: Why is it important or why does it exist?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      (CAUSEQ  ((format nil "What is/are the main cause(s) of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      (EVIDQ  ( (format nil "What is the evidence for  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      (HOWQ  ( (format nil "What are important steps or ways to  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      (EXQ  ( (format nil "What is the best example of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
+      (FEATQ  ( (format nil "What are the main features or characteristics of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      #|(STERETQ  ((format nil "What are other (features/chars.) of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)|#
+      (REGNQ  ((format nil "Is ~A almost always or exclusively associated with something? If not, write 'none'--otherwise describe?  " *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)
+      ;;(PROT0Q  ( (format nil "What example best demonstrates the essence of/most features of  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
       ;;end CS-DECLARATIVE
       )
      (CS-SEMANTIC
-      (CS-SEMANTIC ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  
-      (NAMEQ  ( (format nil "What is the (best) name for  ~A?" *cs-explore-phrase))  CS-SEMANTIC-INSTR *input-box-instrs)
-      (DEFINEQ  ((format nil "What is the best definition of ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *input-box-instrs)
-      (DESCRIBEQ  ( (format nil "What is the best description of  ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *input-box-instrs)
-      (OPPOSITEQ  ( (format nil "What is the opposite of  ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *input-box-instrs)
-      (SYNONYMQ  ( (format nil "What words have a meaning similar to  ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *input-box-instrs)
+      (CS-SEMANTIC-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  
+      (NAMEQ  ( (format nil "What is the best NAME for  ~A?" *cs-explore-phrase))  CS-SEMANTIC-INSTR *input-box-instrs)
+      (DEFQ  ((format nil "What is the best definition of ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *input-box-instrs)
+      (DESCQ  ( (format nil "What is the best description of  ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *input-box-instrs)
+      (OPPQ  ( (format nil "What is the opposite of  ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *input-box-instrs)
+      (SYNQ  ( (format nil "What word(s) has/have a meaning most similar to  ~A?" *cs-explore-phrase)) CS-SEMANTIC-INSTR *multi-input-box-instrs)
       ;;end CS-SEMANTIC
       )
      (CS-EPISODIC
       ;;(instr-symbol (frame-title  frame-instrs) 
-      (CS-EPISODIC ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
+      (CS-EPISODIC-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
       ;;was (format nil  "Associations with the word, class, concept, or instance=> ~A."  *cs-explore-phrase)
-      (EVENTQ  ((format nil "What main event(s) preceded ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *input-box-instrs)
+      (EVNTQ  ((format nil "What main event(s) do you associate with ~A?" *cs-explore-phrase)) CS-EPISODIC-INSTR *multi-input-box-instrs)
       ;;end CS-EPISODIC
       )
      (CS-WORLDVIEW
-      (CS-WORLDVIEW ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") )) 
-      (VALUEQ ( (format nil "What values do you strongly associate with  ~A?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *input-box-instrs)
-      (SELFQ ( (format nil "How does ~A affect you?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *input-box-instrs)
-      (POSEXPECTQ ( (format nil "What POSITIVE outcomes do you expect will follow from ~A?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *input-box-instrs)
-      (NEGEXPECTQ ( (format nil "What NEGATIVE outcomes do you expect will follow from ~A?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *input-box-instrs)
+      (CS-WORLDVIEW-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") )) 
+      (VALNKQ ( (format nil "What value(s) do you most strongly associate with  ~A?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *multi-input-box-instrs)
+      (SELFQ ( (format nil "How does ~A affect you personally?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *multi-input-box-instrs)
+      (OBJQ  ( (format nil "What OBJECT(s) do you most associate with ~A?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *multi-input-box-instrs)
+      ;;(POSEXPQ ( (format nil "What POSITIVE outcomes do you expect will follow from ~A?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *multi-input-box-instrs)
+      ;;(NEGEXPQ ( (format nil "What NEGATIVE outcomes do you expect will follow from ~A?" *cs-explore-phrase)) CS-WORLDVIEW-INSTR *multi-input-box-instrs)
       ;;end CS-WORLDVIEW
       )
      (CS-PROCEDURAL
-      (CS-PROCEDURAL ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") )) 
-      (SUPGOALQ  ( (format nil "Is ~A a part of meeting a larger goal? If not, leave blank. Otherwise list the HIGHER GOAL(S) below: " *cs-explore-phrase)) CS-PROCEDURAL-INSTR *input-box-instrs)
-      (SUBGOALQ  ( (format nil "What SUB-GOAL(S) do you have from:  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *input-box-instrs)
-      (SCRIPTQ ((format nil "What SCRIPTS for behavior (eg. 'ordering in a restaurant') do you associate with  ~A?" *cs-explore-phrase) )CS-PROCEDURAL-INSTR *input-box-instrs)
-      (SITUATION-SDQ  ( (format nil "What situations or stimuli usually or frequently PRECEDE  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *input-box-instrs)
-      (ALT-RQ  ( (format nil "What are some (of the main) alternatives to  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *input-box-instrs)
-      (MOTOR S-R LINKSQ  ( (format nil "What habits, actions, or skills do you strongly associate with  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *input-box-instrs)
-      (REINFQ ((format nil "What rewards or positive outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *input-box-instrs)
-      (PUNISHQ ((format nil "What negative outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *input-box-instrs)
+      (CS-PROCEDURAL-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") )) 
+      (SUPGQ  ( (format nil "Is ~A a part of meeting bigger goals? ~% List one HIGHER GOAL in each popup window (or leave blank if none): " *cs-explore-phrase)) CS-PROCEDURAL-INSTR *multi-input-box-instrs)
+      (SUBGQ  ( (format nil "What SUB-GOAL(S) do you have from:  ~A?~% List sub-goal in each popup (or leave blank if none)." *cs-explore-phrase)) CS-PROCEDURAL-INSTR *multi-input-box-instrs)
+      (SCRPTQ ((format nil "What SCRIPTS or THEMES for behavior (eg. 'ordering in a restaurant') do you associate with  ~A? ~% List one in each popup window (or leave blank if none)." *cs-explore-phrase) )CS-PROCEDURAL-INSTR *multi-input-box-instrs)
+      (SITQ  ( (format nil "What situations or stimuli usually or frequently PRECEDE  ~A? ~% List one in each popup window (or leave blank if none)." *cs-explore-phrase)) CS-PROCEDURAL-INSTR *multi-input-box-instrs)
+      (ALTRQ  ( (format nil "What are some (of the main) alternatives to  ~A? ~% List one in each popup window (or leave blank if none)." *cs-explore-phrase)) CS-PROCEDURAL-INSTR *multi-input-box-instrs)
+      (ACTQ ( (format nil "What habits, actions, or skills do you strongly associate with  ~A? ~% List one in each popup window (or leave blank if none)." *cs-explore-phrase)) CS-PROCEDURAL-INSTR *multi-input-box-instrs)
+      (REINFQ ((format nil "What rewards or positive outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *multi-input-box-instrs)
+      (PUNISHQ ((format nil "What negative outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-PROCEDURAL-INSTR *multi-input-box-instrs)
       ;;end CS-PROCEDURAL
       )
      (CS-MODALITY
-      (CS-MODALITY ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
-      (IMAGEQ   ((format nil "What visual image(s) come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *input-box-instrs)
-      (SOUNDQ  ( (format nil "What sounds come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *input-box-instrs)
-      (SMELLQ  ((format nil "What smells come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *input-box-instrs)
-      (TASTEQ  ((format nil "What tastes come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *input-box-instrs)
-      (TACTILEQ  ((format nil "What tactile sensations come to mind when you think of /do you associate with  ~A?") CS-MODALITY-INSTR *cs-explore-phrase))
+      (CS-MODALITY-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
+      (IMGQ   ((format nil "What visual image(s) come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *multi-input-box-instrs)
+      (SNDQ  ( (format nil "What sounds come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *multi-input-box-instrs)
+      (SENSQ  ((format nil "What smells, tastes, or other sensations come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *multi-input-box-instrs)
+      ;;(SMELLQ  ((format nil "What smells come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *multi-input-box-instrs)
+      ;;(TASTEQ  ((format nil "What tastes come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *multi-input-box-instrs)
+      ;;(TACTLQ  ((format nil "What tactile sensations come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-MODALITY-INSTR *multi-input-box-instrs)
       ;;end CS-MODALITY
       )   
-     (CS-EMOTIONAL
-      (CS-EMOTIONAL ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
-      (EMOTIONQ  ((format nil "What emotion(s) (HAPPY, CARING, ANXIETY, ANGER, SAD) do you MOST associate with ~A?" *cs-explore-phrase)) CS-EMOTIONAL-INSTR *input-box-instrs)
-      #|   (HAPPYQ  ((format nil "What emotions do you associate with ?  Anxiety, sad, anger, happiness, love, etc ask each separately  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)|#
+     (CS-EMOTION
+      (CS-EMOTION-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
+      (EMOTQ  ((format nil "What emotion(s) (HAPPY, CARING, ANXIETY, ANGER, SAD, NONE-OF-ABOVE) do you MOST associate with ~A?" *cs-explore-phrase)) CS-EMOTION-INSTR *multi-input-box-instrs)
+      #|   (HAPPYQ  ((format nil "What emotions do you associate with ?  Anxiety, sad, anger, happiness, love, etc ask each separately  ~A?" *cs-explore-phrase)) CS-DECLARATIVE-INSTR *multi-input-box-instrs)|#
       ;; ADD?? With FUQ  ((format nil "Why, What events/situations/ etc come to mind  ~A?" *cs-explore-phrase))
-      ;;end CS-EMOTIONAL
+      ;;end CS-EMOTION
       )
      ;;END-ALL
      ) "QUESTIONS for making CS-explore questions to explore a CS links in depth")
 
 ;;*ALL-CS-EXPLOREQS-OLD
-(defparameter  *All-CS-exploreQs-OLD                            ;;like *All-PCE-elementQs
+#|(defparameter  *All-CS-exploreQs-OLD                            ;;like *All-PCE-elementQs
   '(
 #|    (PCE-PEOPLE
      (PCE-PEOPLE-INSTR ("People Important To You"  *Instr-Name-element))|#
@@ -108,47 +118,51 @@
    ;;(instr-symbol (frame-title  frame-instrs) 
    (CS-LINKTYPE-INSTR ("LINKS TO OTHER NODES" (format nil "~%        Type answer in box at bottom:     ") ))  ;;*CS-PC-current) 
    ;;was (format nil  "Associations with the word, class, concept, or instance=> ~A."  *cs-explore-phrase)
-   (ISAQ  ((format nil "What kind(s) or type(s) is ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (PARTQ  ( (format nil "List the most important members or parts of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (WHYQ  ((format nil "  ~A: Why is it important or why does it exist?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (CAUSEQ  ((format nil "What caused  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (EVIDENCEQ  ( (format nil "What is the evidence for  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (HOWQ  ( (format nil "What are important steps or ways to  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (EXAMPLEQ  ( (format nil "Give a good example or instance of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (EVENTQ  ((format nil "What main event(s) preceded ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (FEATUREQ  ( (format nil "What are the main features or characteristics of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (STEREOTYPEQ  ((format nil "What are other (features/chars.) of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (REGNANTQ  ((format nil " ~A almost always or exclusively associated with WHAT?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (PROTOTYPEQ  ( (format nil "What example best demonstrates the essence of/most features of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (ALT-RQ  ( (format nil "What are some (of the main) alternatives to  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
+   (ISAQ  ((format nil "What kind(s) or type(s) is ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (PARTQ  ( (format nil "List the most important members or parts of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (WHYQ  ((format nil "  ~A: Why is it important or why does it exist?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (CAUSEQ  ((format nil "What caused  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (EVIDENCEQ  ( (format nil "What is the evidence for  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (HOWQ  ( (format nil "What are important steps or ways to  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (EXQ  ( (format nil "Give a good example or instance of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (EVENTQ  ((format nil "What main event(s) preceded ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (FEATUREQ  ( (format nil "What are the main features or characteristics of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (STEREOTYPEQ  ((format nil "What are other (features/chars.) of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (REGNANTQ  ((format nil " ~A almost always or exclusively associated with WHAT?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (PROTOTYPEQ  ( (format nil "What example best demonstrates the essence of/most features of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (ALT-RQ  ( (format nil "What are some (of the main) alternatives to  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
 ;;MODALITY LINKS--------
 ;;VERBAL
    (NAMEQ  ( (format nil "What is the (best) name for  ~A?" *cs-explore-phrase))  CS-LINKTYPE-INSTR *input-box-instrs)
    (DEFINEQ  ((format nil "What is the best definition of ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
    (DESCRIBEQ  ( (format nil "What is the best description of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
    (OPPOSITEQ  ( (format nil "What is the opposite of  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (SYNONYMQ  ( (format nil "What words have a meaning similar to  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (IMAGEQ   ((format nil "What visual image(s) come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (SOUNDQ  ( (format nil "What sounds come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (SMELLQ  ((format nil "What smells come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (TASTEQ  ((format nil "What tastes come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-   (EMOTIONQ  ((format nil "What emotion(s) (HAPPY, CARING, ANXIETY, ANGER, SAD) do you MOST associate with ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
+   (SYNONYMQ  ( (format nil "What words have a meaning similar to  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (IMAGEQ   ((format nil "What visual image(s) come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (SOUNDQ  ( (format nil "What sounds come to mind when you think of/do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (SMELLQ  ((format nil "What smells come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (TASTEQ  ((format nil "What tastes come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+   (EMOTIONQ  ((format nil "What emotion(s) (HAPPY, CARING, ANXIETY, ANGER, SAD) do you MOST associate with ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
 #|   (HAPPYQ  ((format nil "What emotions do you associate with ?  Anxiety, sad, anger, happiness, love, etc ask each separately  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)|#
 ;; ADD?? With FUQ  ((format nil "Why, What events/situations/ etc come to mind  ~A?" *cs-explore-phrase))
 TACTILEQ  ((format nil "What tactile sensations come to mind when you think of /do you associate with  ~A?" *cs-explore-phrase))
-(SITUATIONS-SDQ  ( (format nil "What situations or stimuli usually or frequently PRECEDE  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-    (MOTOR S-R LINKSQ  ( (format nil "What habits, actions, or skills do you strongly associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
+(SITUATIONS-SDQ  ( (format nil "What situations or stimuli usually or frequently PRECEDE  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+    (MOTOR S-R LINKSQ  ( (format nil "What habits, actions, or skills do you strongly associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
 ;;VALUES, GOALS, REINFS
-   (VALUEQ ( (format nil "What values do you strongly associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-  (SUPGOALQ  ( (format nil "Is ~A a part of meeting a larger goal? If not, leave blank. Otherwise list the HIGHER GOAL(S) below: " *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-  (SUBGOALQ  ( (format nil "What SUB-GOAL(S) do you have from:  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-  (REINFQ ((format nil "What rewards or positive outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-  (PUNISHQ ((format nil "What negative outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *input-box-instrs)
-  (SCRIPTQ ((format nil "What SCRIPTS for behavior (eg. 'ordering in a restaurant') do you associate with  ~A?" *cs-explore-phrase) )CS-LINKTYPE-INSTR *input-box-instrs)
-  )))
+   (VALUEQ ( (format nil "What values do you strongly associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+  (SUPGOALQ  ( (format nil "Is ~A a part of meeting a larger goal? If not, leave blank. Otherwise list the HIGHER GOAL(S) below: " *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+  (SUBGOALQ  ( (format nil "What SUB-GOAL(S) do you have from:  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+  (REINFQ ((format nil "What rewards or positive outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+  (PUNISHQ ((format nil "What negative outcomes do you associate with  ~A?" *cs-explore-phrase)) CS-LINKTYPE-INSTR *multi-input-box-instrs)
+  (SCRIPTQ ((format nil "What SCRIPTS for behavior (eg. 'ordering in a restaurant') do you associate with  ~A?" *cs-explore-phrase) )CS-LINKTYPE-INSTR *multi-input-box-instrs)
+  )))|#
 
 ;;FOR CS-EXPLORE
 (defparameter *input-box-instrs  '("Type answer in BOX below:") "For instructions inside the text-input-pane")
+(defparameter *multi-input-box-instrs  '("Type only ONE answer in BOX below. 
+     * Type any additional answers in other popup windows.  
+     * If NO ANSWER or UNCERTAIN, leave blank. 
+     * When finished with all answers, click on LAST button.") "For instructions inside the text-input-pane")
 
 
 ;;***************************** PC-Questions.lisp ************************
@@ -250,6 +264,9 @@ TACTILEQ  ((format nil "What tactile sensations come to mind when you think of /
                                             "One of the most negative elements in my life" ))
 
 (defparameter Values11to1Array    '(11 10  9  8  7  6  5  4  3  2  1))
+
+
+
 
 
 
