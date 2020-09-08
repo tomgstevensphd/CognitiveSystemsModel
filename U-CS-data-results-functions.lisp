@@ -22,14 +22,14 @@
 ;;  INPUT: (multisel-quest/cat  xkey &key (data-list *CSQ-data-list))  (multisel-quest/cat = a multi-sel qvar symbol or string) 
 ;;   OUTPUT:  (values all-selected-one-xkey-values   qvar&one-xkey-values-list  sel-qvars-in-datalist)
 
-;; B. FUNCTIONS USING MULTI-QVAR-LIST (a list returned from *CSQ-data-list functions above.)
-;; 1. GET-SELECTED-QVAR-LISTS
-;;  INPUT:  multi-qvar-list  (from list returned by GET-MULTI-ANSWER-SELECTED-ITEMS)
+;; B. FUNCTIONS USING MULTI-QVARLIST (a list returned from *CSQ-data-list functions above.)
+;; 1. GET-SELECTED-QVARLISTS
+;;  INPUT:  multi-qvarlist  (from list returned by GET-MULTI-ANSWER-SELECTED-ITEMS)
 ;; OUTPUT: list of all SELECTED items from a multi-selection qvar --generally a category such as BIO. Selected items have a value of 1 (vs 0 for non-selected). RETURNS (values selected-items-list qvar) 
 
 ;; 2.  GET-SELECTED-QVARS&XDATA
-;;  INPUT: multi-qvar-list &key xdata-key-list return-one-key-values) 
-;;  NOTE: multi-qvar-list is a list returned by GET-MULTI-ANSWER-SELECTED-ITEMS.
+;;  INPUT: multi-qvarlist &key xdata-key-list return-one-key-values) 
+;;  NOTE: multi-qvarlist is a list returned by GET-MULTI-ANSWER-SELECTED-ITEMS.
 ;; OUTPUT: (values SELECTED-QVAR-XDATAKEY-VALUE-LISTS  qvar-cat  RETURN-ONE-KEY-VALUES-LIST  selected-qvars-lists)
 
 ;;FOR CALC HQ, GO TO  U-HQ&composite-scales.lisp
@@ -64,7 +64,7 @@
 ;;TEST
 ;; ;;  (get-qvarlist-in-CSQdatalist 'COPBLAME)
 ;;  (get-qvarlist-in-CSQdatalist "stmajgpa")
-;; WORKS--NEW QVAR-LISTS = ("stmajgpa" "st-Major GPA" :SINGLE "3.5-4.0 (A)" "1.000" 8 NIL 8 8 SCORED-NORMAL GPA8ANSARRAY)  "st-Major GPA"
+;; WORKS--NEW QVARLISTS = ("stmajgpa" "st-Major GPA" :SINGLE "3.5-4.0 (A)" "1.000" 8 NIL 8 8 SCORED-NORMAL GPA8ANSARRAY)  "st-Major GPA"
 ;;  (get-qvarlist-in-CSQdatalist "UGOALS") ;; OR 'ugoals), both work
 ;; works, returns= ("UGOALS" :MULTI "UserGoals" "User goals for taking CSQ." 1 ("gsuchap" "1" 1 T 1 1 (:XDATA :SCALES (HQ))) ("gemocop" "2" 1 NIL 0 1 (:XDATA :SCALES (HQ))) ("gslfest" "3" 1 NIL 0 1 (:XDATA :SCALES (VALUES-THEMES BELIEFS SKILLS-CONFIDENCE))) ("gprocrst" "4" 1 NIL 0 1 (:XDATA :SCALES (VALUES-THEMES "siecontr" "sselfman" "semotcop"))) ("gtimeman" "5" 1 NIL 0 1 (:XDATA :SCALES ("sselfman" "semotcop"))) ("grelat" "6" 1 T 1 1 (:XDATA :SCALES (INTERPERSONAL))) ("gmeetpeo" "7" 1 NIL 0 1 (:XDATA :SCALES (INTERPERSONAL))) ("glonelyf" "8" 1 NIL 0 1 (:XDATA :SCALES (HQ))) ("gexvalus" "9" 1 NIL 0 1 (:XDATA :SCALES (HQ))) ("gdepres" "10" 1 NIL 0 1 (:XDATA :SCALES (HQ))) ("ganxfear" "11" 1 NIL 0 1 (:XDATA :SCALES (HQ))) ("gaggrang" "12" 1 NIL 0 1 (:XDATA :SCALES (HQ))) ("gacadsuc" "13" 1 T 1 1 (:XDATA :SCALES (ACAD-LEARNING))) ("gcomplta1" "14" 1 T 1 1 (:XDATA :SCALES (HQ ACAD-LEARNING CAREER-INTEREST))) ("gcompltanomaj" "15" 1 NIL 0 1 (:XDATA :SCALES (HQ ACAD-LEARNING))) ("gcompltanoac" "16" 1 NIL 0 1 (:XDATA :SCALES (HQ))) ("gcarplan" "17" 1 NIL 0 1 (:XDATA :SCALES (CAREER-INTEREST))) ("gcaronly" "18" 1 NIL 0 1 (:XDATA :SCALES (CAREER-INTEREST))) ("gnottake" "19" 1 NIL 0 1 (:XDATA :SCALES NIL)))
 
@@ -152,18 +152,18 @@
   "In U-data-results-functions.lisp,  INPUT  a multi-selection qvar --generally a category such as BIO. Selected items have a value of 1 (vs 0 for non-selected). RETURNS (values selected-items-list qvar) . Returns selected-items-list= nil if none selected, Returns qvar = NIL if qvar not found."
  ;;EGmsq-data-list = (:MULTI-SEL-QUEST   "utype"   ("UTYPE"   :MULTI   "utype"   "UserType"   1   ("twanttho" "1" 1 T 1 1 (:XDATA :SCALES (HQ))) ... more ans items
   (let
-      ((qvar-list msq-datalist)
+      ((qvarlist msq-datalist)
        (selected-items-list)
        (qvar-result)
        )
-    (unless qvar-list
-      (setf  qvar-list (get-key-value-in-nested-lists `((,qvar 1)) all-data-list)))
+    (unless qvarlist
+      (setf  qvarlist (get-key-value-in-nested-lists `((,qvar 1)) all-data-list)))
     ;;  (get-key-value-in-nested-lists  `((T 0)("bio1ethn" 1)) *CSQ-scaledata-list :return-list-p t) = works
     ;;(get-key-value-in-nested-lists  `(("bio1ethn" 1)) *CSQ-data-list :return-list-p t) works
     (cond
-     (qvar-list
+     (qvarlist
       (multiple-value-setq (selected-items-list qvar-result)
-          (get-selected-qvar-lists qvar-list))
+          (get-selected-qvarlists qvarlist))
       )
      (t nil))
     (values selected-items-list qvar-result)
@@ -234,31 +234,31 @@
 ;;
 ;;ddd
 (defun get-multi-sel-items-ansqvar&text (multi-qvar &key (all-scales-datalist *CSQ-scaledata-list) msq-datalist)
-  "In U-data-results-functions, INPUT= a multi-sel qvar symbol or string. RETURNS (values selected-answer-text-list selected-answer-qvar-list  selected-qvar-lists). NOTE: identical/redundant values in *CSQ-data-list."
+  "In U-data-results-functions, INPUT= a multi-sel qvar symbol or string. RETURNS (values selected-answer-text-list selected-answer-qvarlist  selected-qvarlists). NOTE: identical/redundant values in *CSQ-data-list."
   (let
-      ((selected-qvar-lists
+      ((selected-qvarlists
         (get-multi-answer-selected-items multi-qvar :all-data-list all-scales-datalist
                                          :msq-datalist msq-datalist))
-       (selected-answer-qvar-list)
+       (selected-answer-qvarlist)
        (selected-answer-text-list)
      (ans-qvar)
      ( ans-text)
        )
     (loop
-     for sel-ans-qvar-list in selected-qvar-lists
+     for sel-ans-qvarlist in selected-qvarlists
      do
      (cond
-      ((listp sel-ans-qvar-list)
-       (setf ans-qvar (car sel-ans-qvar-list)
+      ((listp sel-ans-qvarlist)
+       (setf ans-qvar (car sel-ans-qvarlist)
              ans-text (get-multi-sel-qvar-answer-text  ans-qvar)
-             selected-answer-qvar-list (append selected-answer-qvar-list (list ans-qvar))
+             selected-answer-qvarlist (append selected-answer-qvarlist (list ans-qvar))
              selected-answer-text-list (append selected-answer-text-list (list ans-text)))
        )
       (t ))
      ;;end loop
      )
 
-    (values selected-answer-text-list selected-answer-qvar-list  selected-qvar-lists)
+    (values selected-answer-text-list selected-answer-qvarlist  selected-qvarlists)
     ;;end let get-multi-sel-items-ansqvar&text
     ))
 ;;TEST
@@ -266,7 +266,7 @@
 ;; works, =  ("texperie" "wantspq")     ("Experienced self help user. " "I want to choose specific questionnaire(s).")     (("texperie" "5" 1 T 1 1 (:XDATA :SCALES NIL)) ("wantspq" "7" 1 T 1 1 (:XDATA :SCALES (SPECIFIC-QUESTS))))     
 
 ;;(twanttho 1 1 T 1 1 (XDATA SCALES (HQ)))
-;;  (get-qvar-list "wantspq")
+;;  (get-qvarlist "wantspq")
 ;;TEST USING *CSQ-SCALEDATA-LIST
 ;;  (get-multi-sel-items-ansqvar&text 'BIO1ETHN :data-list *CSQ-scaledata-list) 
 ;;WORKS = ("North America" "Cambodia")    ("enortham" "ecambodn")    (("enortham" "1" 1 T 1 6 NIL) ("ecambodn" "5" 1 T 1 6 NIL))
@@ -277,7 +277,7 @@
 (defun get-multi-sel-qvar-answer-text (qvar)
   "In U-data-results-functions, RETURNS answer text for a multi-selection question, with answer = qvar"
   (let
-      ((answer-text-list (fifth (get-qvar-list qvar)))
+      ((answer-text-list (fifth (get-qvarlist qvar)))
        (answer-text "")                         
        )
     (loop
@@ -299,17 +299,17 @@
                                                 &key (data-list *CSQ-data-list))
   "In U-data-results-functions, INPUT= a multi-sel qvar symbol or string.  RETURNS (values all-selected-one-xkey-values qvar&one-xkey-values-list sel-qvars-in-datalist)"
   (let
-      ((cat-qvar-list-of-lists)
+      ((cat-qvarlist-of-lists)
       ;; (qvar-one-key-values-list)
        )
     ;;get the qvar lists
-     (setf cat-qvar-list-of-lists (get-qvarlist-in-CSQdatalist  multisel-quest/cat
+     (setf cat-qvarlist-of-lists (get-qvarlist-in-CSQdatalist  multisel-quest/cat
                                                                 :data-list data-list))
-     ;;(afout 'out (format nil "cat-qvar-list-of-lists= ~A" cat-qvar-list-of-lists))
+     ;;(afout 'out (format nil "cat-qvarlist-of-lists= ~A" cat-qvarlist-of-lists))
      ;;find the lists of selected cats, scales in above lists
      (multiple-value-bind (qvar&one-xkey-values-list   qvar-cat 
                                          all-selected-one-xkey-values sel-qvars-in-datalist)
-         (get-selected-qvars&xdata cat-qvar-list-of-lists  
+         (get-selected-qvars&xdata cat-qvarlist-of-lists  
                               :xdata-key-list (list xkey) :return-one-key-values  xkey)
      ;;end mvb, let, get-multi-sel-xdata-key-values
      (values all-selected-one-xkey-values qvar&one-xkey-values-list sel-qvars-in-datalist)
@@ -327,7 +327,7 @@
 ;;GET-SELECTED-QVARS&XDATA
 ;;
 ;;ddd
-(defun get-selected-qvars&xdata (multi-qvar-list &key xdata-key-list 
+(defun get-selected-qvars&xdata (multi-qvarlist &key xdata-key-list 
                                                       return-one-key-values)
    "In U-data-results-functions.lisp, INPUT from list returned by GET-MULTI-ANSWER-SELECTED-ITEMS.  Then RETURNS (values selected-qvar-xdatakey-value-lists  qvar-cat  return-one-key-values-list  selected-qvars-lists). First is a list of lists of all SELECTED item qvars with xdata-key-list or lists of all xdata if xdata-key-list = nil. Second is the qvar-cat of which the answers are = the qvars. If return-one-key-values = a key, then also returns a separate list of ONLY that key and a list of its values for all items without the qvar listed."
    (let
@@ -343,7 +343,7 @@
         (return-value)
         )
      (multiple-value-setq (selected-qvars-lists qvar-cat)
-         (get-selected-qvar-lists multi-qvar-list))
+         (get-selected-qvarlists multi-qvarlist))
      (loop
       for item-list in selected-qvars-lists
       do
@@ -386,10 +386,10 @@
 
 
 
-;;GET-SELECTED-QVAR-LISTS
+;;GET-SELECTED-QVARLISTS
 ;;
 ;;ddd
-(defun get-selected-qvar-lists (multi-qvar-list)
+(defun get-selected-qvarlists (multi-qvarlist)
   "In U-data-results-functions.lisp,  INPUT from list returned by GET-MULTI-ANSWER-SELECTED-ITEMS.  Then  RETURNS a list of all SELECTED items from a multi-selection qvar --generally a category such as BIO. Selected items have a value of 1 (vs 0 for non-selected). RETURNS (values selected-items-list qvar) . Returns selected-items-list= nil if none selected."
   (let
       ((selected-items-list)
@@ -397,7 +397,7 @@
      (  selected-p)
        )
     (loop
-     for sublist in multi-qvar-list
+     for sublist in multi-qvarlist
      do
      ;;(afout 'out (format nil "sublist= ~A~%" sublist))
      (cond
@@ -409,18 +409,19 @@
       (t nil))
      ;;end loop
      )
-    (values selected-items-list (car multi-qvar-list))
-    ;;end let, get-selected-qvar-lists
+    (values selected-items-list (car multi-qvarlist))
+    ;;end let, get-selected-qvarlists
     ))
 ;;TEST -- for multiple-selection quests only
-;;  (get-selected-qvar-lists '("UTYPE" :MULTI "UserType" "User characteristics/assessment choices" 2 ("twanttho" "1" 1 T 1 2 (:XDATA :SCALES (HQ))) ("tknowmor" "2" 1 NIL 0 2 (:XDATA :SCALES (HQ))) ("twanthel" "3" 1 NIL 0 2 (:XDATA :SCALES (HQ))) ("twantspe" "4" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("texperie" "5" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("tprevCSQ" "6" 1 T 1 2 (:XDATA :SCALES (PREVIOUS-USER))) ("wantspq" "7" 1 T 1 2 (:XDATA :SCALES (SPECIFIC-QUESTS))) ("tu100stu" "8" 1 NIL 0 2 (:XDATA :SCALES (HQ ACAD-LEARNING))) ("tcsulbst" "9" 1 NIL 0 2 (:XDATA :SCALES (ACAD-LEARNING))) ("tcolstu" "10" 1 NIL 0 2 (:XDATA :SCALES (ACAD-LEARNING))) ("totherst" "11" 1 NIL 0 2 (:XDATA :SCALES (ACAD-LEARNING))) ("tressub" "12" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("tcolfaca" "13" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("u-none" "14" 1 T 1 2 (:XDATA :SCALES NIL))))
+;;  (get-selected-qvarlists '("UTYPE" :MULTI "UserType" "User characteristics/assessment choices" 2 ("twanttho" "1" 1 T 1 2 (:XDATA :SCALES (HQ))) ("tknowmor" "2" 1 NIL 0 2 (:XDATA :SCALES (HQ))) ("twanthel" "3" 1 NIL 0 2 (:XDATA :SCALES (HQ))) ("twantspe" "4" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("texperie" "5" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("tprevCSQ" "6" 1 T 1 2 (:XDATA :SCALES (PREVIOUS-USER))) ("wantspq" "7" 1 T 1 2 (:XDATA :SCALES (SPECIFIC-QUESTS))) ("tu100stu" "8" 1 NIL 0 2 (:XDATA :SCALES (HQ ACAD-LEARNING))) ("tcsulbst" "9" 1 NIL 0 2 (:XDATA :SCALES (ACAD-LEARNING))) ("tcolstu" "10" 1 NIL 0 2 (:XDATA :SCALES (ACAD-LEARNING))) ("totherst" "11" 1 NIL 0 2 (:XDATA :SCALES (ACAD-LEARNING))) ("tressub" "12" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("tcolfaca" "13" 1 NIL 0 2 (:XDATA :SCALES NIL)) ("u-none" "14" 1 T 1 2 (:XDATA :SCALES NIL))))
 ;;WORKS, RETURNS =  (("twanttho" "1" 1 T 1 2 (:XDATA :SCALES (HQ))) ("tprevCSQ" "6" 1 T 1 2 (:XDATA :SCALES (PREVIOUS-USER))) ("wantspq" "7" 1 T 1 2 (:XDATA :SCALES (SPECIFIC-QUESTS))) ("u-none" "14" 1 T 1 2 (:XDATA :SCALES NIL)))    "UTYPE"
 
 ;;short version
 ;;ddd
-(defun pp-CSQ-data-list ()
-  "In U-data-results, pretty-prints  *CSQ-data-list using pretty-print-CSQ-data-list (&key (CSQ-data-list *CSQ-data-list "
-  (pretty-print-CSQ-data-list)
+(defun pp-CSQ-data-list (&optional (data-list *CSQ-DATA-LIST))
+  "In U-data-results, pretty-prints  *CSQ-data-list"
+  (pprint data-list)
+ ;; (pretty-print-CSQ-data-list)
   )
 
 ;;not needed, just use (pprint *CSQ-data-list)
@@ -591,15 +592,17 @@
 ;;   (pprint *scaletest1)
 ;; or (setf *CSQ-scaledata-list (calc-scale&subscale-scores))
 
+;; (setf *CSQ-scaledata-list (calc-scale&subscale-scores :data-list *TOM-SHAQ-DATA-LIST))
+
 
 
 ;;CALC-SCALE-DATA
 ;;
 ;;ddd
 (defun calc-scale-data (scale-name quest-data-lists &key is-subscale-p (scoring-formula '+)) ;;alternative  append-data-lists-p (data-list *CSQ-data-list) (scaledata-list *CSQ-scaledata-list))
-  "In U-data-results-functions.  1.Given scale-name and question-data-list (in *CSQ-data-list format) in data-list ,2.calcs scale data, 3. adds to *CSQ-data-list, 4. writes data in formatted results. RETURNS (values scaledata-list. Either :scaledata or :subscaledata then  scale-name :N  num-scale-items :REL scale-rel-score :MN scale-mean-score :TOT scale-total-scor :MAX scale-max-score :SD scale-SD :VAR scale-variance) and adds same items to slots in the scale'-inst. NOTE: :QV with qvar-list and :SS with subscale-list added in calling function."
+  "In U-data-results-functions.  1.Given scale-name and question-data-list (in *CSQ-data-list format) in data-list ,2.calcs scale data, 3. adds to *CSQ-data-list, 4. writes data in formatted results. RETURNS (values scaledata-list. Either :scaledata or :subscaledata then  scale-name :N  num-scale-items :REL scale-rel-score :MN scale-mean-score :TOT scale-total-scor :MAX scale-max-score :SD scale-SD :VAR scale-variance) and adds same items to slots in the scale'-inst. NOTE: :QV with qvarlist and :SS with subscale-list added in calling function."
   (let*
-      ((scale-inst (eval (my-make-symbol 
+      ((scale-inst (eval (my-make-cs-symbol 
                           (format nil "*~A-INST" scale-name))))
         (scale-description  (slot-value scale-inst 'description))
         (scale-type)
@@ -835,20 +838,30 @@ Appends *CSQ-data-list with
   "scalessel"|#
 ;;new ("sID" :TEXT-DATA ("Name" " " :SINGLE " ")("UserID" "222222" :SINGLE "222222") ("Sex" "Male" :SINGLE "Male" 1) ("Age" 22 :SINGLE 22 22) ("Email" "" :SINGLE "") ("USA?" "USA" :SINGLE "USA" 1) ("Nation" "USA" :SINGLE "USA") ("ZipCode" 44444 :SINGLE 44444) ("HrsWork" 22 :SINGLE 22 22))
 
-;;GET-TEXT-SCALE-DATA
-;;
+
+
+;;GET-TEXTDATA-ANSWER
+;;2020 modified
 ;;ddd
 (defun get-textdata-answer (qvar-name scale-name 
-                                      &key (datalist *CSQ-scaledata-list) (nth 1))
-  "In U-data-results-functions. RETURNS (values answer qvar-name). NOTE: If  datalist is a only a scale datalist, it must be the datalist INSIDE a list."
+                                      &key (datalist (append *SHAQ-ALL-DATA-LIST
+                                                             *CSQ-scaledata-list)) (nth 1))
+  "In U-data-results-functions. RETURNS (values answer qvar-name).
+ Note: tries scale-datalist first, then :datalist to search for key-value=answer"
   (let*
-      ((scaledata-list (get-scale-datalist scale-name))
-       (answer (get-nth-in-keylist qvar-name nth scaledata-list))
+      ((scaledata-list (cond ((get-scale-datalist scale-name))
+                             (T datalist)))
+      ;;OLD (answer (get-nth-in-keylist qvar-name nth scaledata-list))
+      ;;try
+      (answer (get-keyvalue-in-nested-list qvar-name  scaledata-list))
+       ;;(list (list qvar-name 0 nth))
        )
     (values answer qvar-name)
     ))
-
-;; (get-textdata-answer "sex" "sID"   :datalist '(("sID" :TEXT-DATA ("Name" " " :SINGLE " ")("UserID" "222222" :SINGLE "222222") ("Sex" "Male" :SINGLE "Male" 1) ("Age" 22 :SINGLE 22 22) ("Email" "" :SINGLE "") ("USA?" "USA" :SINGLE "USA" 1) ("Nation" "USA" :SINGLE "USA") ("ZipCode" 44444 :SINGLE 44444) ("HrsWork" 22 :SINGLE 22 22))))
+;;TEST
+;; (get-textdata-answer "sex" "sID"   :datalist '(("sID" :TEXT-DATA ("Name" " " :SINGLE " ")("UserID" "222222" :SINGLE "222222") ("Sex" "Male" :SINGLE "Male" 1) ("Age" 22 :SINGLE 22 22) ("Email" "" :SINGLE "") ("USA?" "USA" :SINGLE "USA" 1) ("Nation" "USA" :SINGLE "USA") ("ZipCode" 44444 :SINGLE 44444) ("HrsWork" 22 :SINGLE 22 22)))) 
+;; NEW works= "Male"  "Sex"
+;; OLD result: NIL "sex"
 
 
 #| :TEXT-DATA "sID" ("Name" " " :SINGLE " ") ("UserID" "222222" :SINGLE "222222") ("Sex" "Male" :SINGLE "Male" 1) ("Age" 22 :SINGLE 22 22) ("Email" "" :SINGLE "") ("USA?" "USA" :SINGLE "USA" 1) ("Nation" "USA" :SINGLE "USA") ("ZipCode" 44444 :SINGLE 44444) ("HrsWork" 22 :SINGLE 22 22)
@@ -859,7 +872,7 @@ Appends *CSQ-data-list with
 ;;MAKE-SUBSCALE-DATALIST
 ;;
 ;;ddd
-(defun make-subscale-datalist (subscale-name subscale-qvar-list scale-data-list)
+(defun make-subscale-datalist (subscale-name subscale-qvarlist scale-data-list)
   "In U-data-results-functions"
   (let
       ((subscale-datalist)
@@ -869,7 +882,7 @@ Appends *CSQ-data-list with
      for qdata-list  in scale-data-list
      do
      (setf qvar (car qdata-list))
-     (if (member qvar subscale-qvar-list :test 'equal)
+     (if (member qvar subscale-qvarlist :test 'equal)
          (setf subscale-datalist (append subscale-datalist (list qdata-list))))
      ;;end loop
      )
@@ -1028,4 +1041,216 @@ Appends *CSQ-data-list with
 
 ;; One *csq-data-list item= (INTIMATE (MOTHER BEST-M-FRIEND BEST-F-FRIEND (INTIMATE INTIMATE :SINGLE "Very important" "0.750" 9 1 12 9 SCORED-NORMAL PRIORITY12)))
 ;
+
+
+
+
+;;GET-SHAQ-SCALE-SCORE-ETC
+;;2020
+;;ddd
+(defun get-csq-scale-score-etc (scale  &key 
+                                        not-return-qvar-datalists-p
+                                        (scale-end-list '(:scale :date )) (score-key :REL)
+                                        (sd-key :SD)  (sublist-key :SS) (qvar-key :QV)
+                                        (all-scales-data-key :SHAQ-SCALEDATA-LIST)
+                                        (subscale-data-key :SUBSCALEDATA)
+                                         (scale-data-key :SCALEDATA)
+                                       (quests-scales-datalist *SHAQ-ALL-DATA-LIST ))
+  "U-CS-data-results-functions. NEW 2020.  SCALE can be sym/str.  RETURNS (values scale-rel-score  scale-rel-score-str scale-datalist scale-qvars scale-qvar-datalists  scale-subscales scale-type scale-SD scale-SD-str)"
+  (let*
+      ((scale-sym (cond ((symbolp scale) scale)
+                        (t (setf scale-sym (my-make-symbol scale)))))
+       (all-scales-data-list (nth-value 2
+                                        (get-key-value all-scales-data-key 
+                                                       quests-scales-datalist)))
+       (scale-datalist (cond  ;;search scales, then subscales
+                        ((get-list-with-multi-keys (list  scale-data-key scale-sym)
+                                                     all-scales-data-list))
+                        (T (get-list-with-multi-keys (list subscale-data-key scale-sym )
+                                                     all-scales-data-list))))
+       ;;SSWVGRATPT
+        ;; (get-list-with-multi-keys '(:SUBSCALEDATA SSWVGRATPT)  *SHAQ-ALL-DATA-LIST) = works
+       ;; (get-list-with-multi-keys '(:SCALEDATA SWORLDVIEW)  *SHAQ-ALL-       
+       (scale-rel-score-str) 
+       (scale-rel-score (get-key-value score-key scale-datalist))
+       (scale-SD (get-key-value sd-key scale-datalist))
+       (scale-SD-str)
+       (listname)
+       (scale-type (car scale-datalist)) ;;is :SCALEDATA or :SUBSCALEDATA
+       (datalist)
+       (scale-qvars (get-key-value qvar-key scale-datalist) )
+       (scale-qvar-datalists)
+       (scale-datalist)
+       (x-val)
+       (scale-subscales (get-key-value sublist-key scale-datalist))
+       (is-subscale-p (when (equal scale-type :SUBSCALEDATA) T))
+       ) 
+    ;;find rel-score and rel-score-str
+    (when scale-rel-score
+           (cond
+            ((numberp scale-rel-score)
+             (setf scale-rel-score-str (format nil "~A" scale-rel-score)))
+            (t  (setf scale-rel-score-str scale-rel-score
+                      scale-rel-score (CONVERT-STRING-TO-FLOAT scale-rel-score))))
+           ;;end when scale-rel-score-str
+           )
+    ;;same for scale-SD
+    (when scale-SD
+           (cond
+            ((numberp scale-SD)
+             (setf scale-SD-str (format nil "~A" scale-SD)))
+            (t  (setf scale-SD-str scale-SD
+                      scale-SD (CONVERT-STRING-TO-FLOAT scale-SD))))
+           ;;end when scale-SD
+           )
+    (values scale-rel-score  scale-rel-score-str scale-datalist scale-qvars scale-qvar-datalists  scale-subscales scale-type scale-SD scale-SD-str) 
+    ;;end let, get-csq-scale-score-etc
+    ))
+;;TEST
+;; (get-csq-scale-score-etc 'sworldview)
+;; FOR SUBSCALES
+;; (get-csq-scale-score-etc "SSWVGRATPT" :quests-scales-datalist *shaq-all-data-list)
+;;
+;;    (values scale-rel-score  scale-rel-score-str scale-datalist scale-qvars scale-qvar-datalists  scale-subscales scale-type) 
+
+
+
+;;GET-CSQ-SCALE-SCORE&DATA
+;;original modified slightly
+;;ddd
+(defun get-csq-scale-score&data (scale  &key is-subscale-p
+                                        not-return-qvar-datalists-p
+                                        (scale-end-list '(:scale :date ))
+                                         (sublist-key :SS) (qvar-key :QV)
+                                       (quests-scales-datalist *CSQ-DATA-LIST ))
+  "U-CS-data-results-functions  SCALE can be sym/str.  RETURNS (values scale-rel-score  scale-rel-score-str scale-datalist scale-qvars scale-qvar-datalists  scale-subscales scale-type)   INPUT:  IS-SUBSCALE-P must be used for subscales. scale-end-list marks end of a list of qvar-datalists. "
+  (let*
+      ((scale-sym (cond ((symbolp scale) scale)
+                        (t (setf scale-sym (my-make-symbol scale)))))
+       (scale-rel-score-str) 
+       (scale-rel-score)
+       (listname)
+       (scale-type) ;;is :SCALEDATA or :SUBSCALEDATA
+       (datalist)
+       (scale-qvars)
+       (scale-qvar-datalists)
+       (scale-datalist)
+       (x-val)
+       (scale-qvars)
+       (scale-subscales)
+       ) 
+    (loop
+     for list in quests-scales-datalist
+     do
+     (setf listname (car list))
+     (cond
+      ;;GET THE SCALE QUEST NAMES&DATA
+      ((and (equal listname :csq-data-list)
+            (null not-return-qvar-datalists-p)  (null is-subscale-p))
+       (setf scale-qvar-datalists
+             (get-items-betw-keys (list scale-sym) scale-end-list list)))
+      ((equal listname  :shaq-scaledata-list)
+       ;;FOR SCALE SCORES ETC
+       ;; 1-FIND THE SCALE-DATALIST
+       (cond
+        ((null is-subscale-p) 
+         (multiple-value-setq (x-val scale-datalist)
+             (get-keyvalue-in-nested-list (list (list scale-sym T)) list)))
+        (T
+         (setf scale-datalist 
+               (get-list-with-multi-keys (list :SUBSCALEDATA scale) list))))
+
+       ;;PROCESS THE scale-datalist  SSSSSS START HERE    
+       (when scale-datalist
+         ;;get type
+         (setf scale-type (car scale-datalist))
+        ;;find score and convert
+         (setf scale-rel-score (sixth scale-datalist))    
+         (when scale-rel-score
+           (cond
+            ((numberp scale-rel-score)
+             (setf scale-rel-score-str (format nil "~A" scale-rel-score)))
+            (t  (setf scale-rel-score-str scale-rel-score
+                      scale-rel-score (CONVERT-STRING-TO-FLOAT scale-rel-score))))
+           ;;end when scale-rel-score-str
+           )
+         ;; SCALE-QVARS
+         (setf scale-qvars (get-key-value qvar-key scale-datalist))
+         ;;SCALE-SUBSCALES 
+         (setf scale-subscales (get-key-value sublist-key scale-datalist))
+         ;;(break "END of found datalist")
+         (return)
+         ;;end when
+         )
+       ;;end, :shaq-scaledata-list
+       )
+      (T nil))
+     ;;end loop
+     )
+    (values scale-rel-score  scale-rel-score-str scale-datalist scale-qvars scale-qvar-datalists  scale-subscales scale-type) 
+    ;;end let, get-csq-scale-score&data
+    ))
+;; (get-csq-scale-score&data 'SSL1BCONFIDNOTAVOIDSTUDY)
+;; works=   0.143  "0.143"
+;;scale-datalist= (:SCALEDATA SSL1BCONFIDNOTAVOIDSTUDY :N 5 :REL 0.143 :MN 1.0 :TOT 5 :MAX 35 :SD 0.0 :VAR 0.0 :QV (LRNUNASN LRNCOLMT LRNTIRED LRNAREAD LRNPROOF))
+;;scale-qvars= (LRNUNASN LRNCOLMT LRNTIRED LRNAREAD LRNPROOF)
+;;scale-qvar-datalists= ((LRNUNASN "ld-Understand & begin assignments" :SINGLE "EXTREMELY accurate / like me" "0.143" 1 1 7 1 SCORED-REVERSE LIKEME7REVERSE) (LRNCOLMT "ld-Not made to feel not college material" :SINGLE "EXTREMELY accurate / like me" "0.143" 1 2 7 1 SCORED-REVERSE LIKEME7REVERSE) (LRNTIRED "ld-Not reading 1 hour make tired" :SINGLE "EXTREMELY accurate / like me" "0.143" 1 3 7 1 SCORED-REVERSE LIKEME7REVERSE) (LRNAREAD "ld-Not problem avoiding reading" :SINGLE "EXTREMELY accurate / like me" "0.143" 1 4 7 1 SCORED-REVERSE LIKEME7REVERSE) (LRNPROOF "ld-Not unsure of un-proofed-by-other paper" :SINGLE "EXTREMELY accurate / like me" "0.143" 1 5 7 1 SCORED-REVERSE LIKEME7REVERSE))     scale-subscales= NIL     :SCALEDATA
+
+;; scale-rel-score  scale-rel-score-str scale-datalist scale-qvars scale-qvar-datalists  scale-subscales scale-type)
+;; (get-csq-scale-score&data  'SWORLDVIEW)
+;; works= 0.68445457   "0.68445457"
+;;scale-datalist= (:SCALEDATA SWORLDVIEW :N 11 :REL 0.68445457 :MN 5.3636365 :TOT 59 :MAX 86 :SD 3.4712515 :VAR 12.049587 :QV (WOVPROGR WOVGOODF WOVMYLIF WOVNFAIR TBVENTIT WOVINJUR WOVABUND TBVGRATI WOVENTIT WOVGRATE WOVPOSTH) :SS ("SSWVGRATPT" "SSWVOPTIMS" "SSWVENTIT"))
+;;scale-qvars=  (WOVPROGR WOVGOODF WOVMYLIF WOVNFAIR TBVENTIT WOVINJUR WOVABUND TBVGRATI WOVENTIT WOVGRATE WOVPOSTH)
+;;scale-qvar-datalists= ((WOVPROGR "wv-World will improve" :SINGLE "EXTREMELY agree" "1.000" 7 1 7 7 SCORED-NORMAL AGREE7) (WOVGOODF "wv-Good forces control world" :SINGLE "EXTREMELY agree" "1.000" 7 2 7 7 SCORED-NORMAL AGREE7) (WOVMYLIF "wv-My life will improve" :SINGLE "EXTREMELY agree" "1.000" 7 3 7 7 SCORED-NORMAL AGREE7) (WOVNFAIR "wv-Not life unfair to me" :SINGLE "EXTREMELY agree" "0.143" 1 4 7 1 SCORED-REVERSE AGREE7REVERSE) (TBVENTIT "bu-Not entitled to good life" :SINGLE "The most important belief in my life" "0.100" 1 5 10 1 SCORED-REVERSE BELIEF10REVERSE) (WOVINJUR "wv-Not one ruined my life" :SINGLE "EXTREMELY agree" "0.143" 1 6 7 1 SCORED-REVERSE AGREE7REVERSE) (WOVABUND "wv-Have all I need to be happy" :SINGLE "EXTREMELY agree" "1.000" 7 7 7 7 SCORED-NORMAL AGREE7) (TBVGRATI "bu-Gratitude-abundance thinking" :SINGLE "The most important belief in my life" "1.000" 10 8 10 10 SCORED-NORMAL BELIEF10) (WOVENTIT "wv-Not entitled to basic necessities" :SINGLE "EXTREMELY agree" "0.143" 1 9 7 1 SCORED-REVERSE AGREE7REVERSE) (WOVGRATE "wv-Extremely grateful" :SINGLE "EXTREMELY agree" "1.000" 7 10 7 7 SCORED-NORMAL AGREE7) (WOVPOSTH "wv-Percent of time positive thoughts" :SINGLE "Greater than 90 percent" "1.000" 10 11 10 10 SCORED-NORMAL PERCENT10))
+;; scale-subscales=  ("SSWVGRATPT" "SSWVOPTIMS" "SSWVENTIT")
+; scale-type= :SCALEDATA
+
+;;FOR NOT-RETURN-QVAR-DATALISTS-P
+;; (get-csq-scale-score&data  'SWORLDVIEW :not-return-qvar-datalists-p T)
+;;works= 0.68445457  "0.68445457"
+;;  (:SCALEDATA SWORLDVIEW :N 11 :REL 0.68445457 :MN 5.3636365 :TOT 59 :MAX 86 :SD 3.4712515 :VAR 12.049587 :QV (WOVPROGR WOVGOODF WOVMYLIF WOVNFAIR TBVENTIT WOVINJUR WOVABUND TBVGRATI WOVENTIT WOVGRATE WOVPOSTH) :SS ("SSWVGRATPT" "SSWVOPTIMS" "SSWVENTIT"))
+;; (WOVPROGR WOVGOODF WOVMYLIF WOVNFAIR TBVENTIT WOVINJUR WOVABUND TBVGRATI WOVENTIT WOVGRATE WOVPOSTH)
+;;  NIL     ("SSWVGRATPT" "SSWVOPTIMS" "SSWVENTIT")   :SCALEDATA
+
+;;FOR A SUBSCALE
+;; (get-csq-scale-score&data   'SSIENCODEP :is-subscale-p T)
+;; scale-rel-score= 0.143  scale-rel-score-str= "0.143"
+;;scale-datalist= (:SUBSCALEDATA "SSIENCODEP" :N 2 :REL 0.143 :MN 1.0 :TOT 2 :MAX 14 :SD 0.0 :VAR 0.0 :QV (IECCOFEE IECCOPRB))
+;;scale-qvars= ((IECCOFEE IECCOPRB))
+;;scale-qvar-datalists= NIL  scale-subscales= NIL scale-type= :SUBSCALEDATA
+
+
+
+
+
+;;GET-CSQ-QVAR-SCORE&DATA
+;;2020
+;;ddd
+(defun get-csq-qvar-score&data (qvar  
+                                &key (quests-scales-datalist (append *CSQ-DATA-LIST
+                                                                     *SHAQ-ALL-DATA-LIST))
+                                    (pc-elm-key :PCSYM-ELM-LISTS)
+                                    (shaq-qvar-key :SHAQ-DATA-LIST)
+                                )
+  "U-CS-data-results-functions.  Gets SHAQ single-sel quest score & data.   RETURNS (values rel-score rel-score-str score-norm-or-reverse qvar-datalist)   INPUT:  sym or string."
+  (multiple-value-bind (returnval qvar-datalist)
+      (get-keyvalue-in-nested-list (list (list qvar T)) quests-scales-datalist)
+    (let*
+        ((rel-score-str) 
+         (rel-score)
+         (score-norm-or-reverse 'SCORED-NORMAL )
+         ) 
+      (setf rel-score-str (FIFTH qvar-datalist))
+      ;;score-norm-or-reverse
+      (when (member 'SCORED-REVERSE qvar-datalist :test 'my-equal)
+        (setf score-norm-or-reverse 'SCORED-REVERSE))           
+      (when (stringp rel-score-str)
+        (setf rel-score (convert-string-to-float rel-score-str)))
+      (values rel-score rel-score-str score-norm-or-reverse qvar-datalist) 
+      ;;end let, get-csq-qvar-score&data
+      )))
+;; (get-csq-qvar-score&data 'SMTBUSY)
+;;works= 1.0   "1.000"  SCORED-NORMAL  (SMTBUSY "sm-Rarely upset about too rushed" :SINGLE "EXTREMELY accurate / like me" "1.000" 7 1 7 7 SCORED-NORMAL LIKEME7)
+;; (get-csq-qvar-score&data 'WOVGOODF) 
+;; works= 1.0   "1.000"   SCORED-NORMAL     (WOVGOODF "wv-Good forces control world" :SINGLE "EXTREMELY agree" "1.000" 7 2 7 7 SCORED-NORMAL AGREE7)
 

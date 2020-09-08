@@ -12,7 +12,7 @@
 (defparameter  *external-border 20)
 (defparameter *internal-border-width 25)
 (defparameter *fr-visible-min-width  960) 
-(defparameter *fr-visible-min-height 640)   ;; error :maximize)
+(defparameter *fr-visible-min-height 750)   ;; error :maximize)
 (defparameter *fr-border-color :red)
 (defparameter  *frame-title "Cognitive Systems Questionnaire (CSQ) QUESTIONS")
   (when *run-shaq-p (setf  *frame-title "Success and Happiness Attributes Questionnaire (SHAQ) QUESTIONS"))
@@ -26,7 +26,8 @@
 (defparameter  *current-multi-selection-qnum 0)
   ;;pane args
   ;;title-rich-text-pane
-(defparameter *title-pane-height 40)
+(defparameter *title-pane-height 70)
+(defparameter  *instructions-pane-height 100)
 (defparameter *title-pane-width nil)
 (defparameter *title-text-left-margin-spaces 20)
 (defparameter *title-pane-font-face nil)
@@ -130,8 +131,9 @@
 (defparameter *left-button-filler-pane-width 50)
   ;;end set-global-question-variables
 
-(defparameter  *csq-step-button-strings  '("1. BEGINNING" "2. After Elements NAMED" "3. After COMPARING 3 elements at a time." "4. After RATING all values" "5. After RANKING values with SAME ratings." "6. Before Exploring a Cognitive System in DEPTH") "In csq-choices frame")
-(defparameter  *csq-load-user-data-options  '("1. Load last user data" "2. Start user data from beginning." "3. Load another user data source") "In csq-choices frame")
+(defparameter  *csq-step-button-strings  '("1. Complete ALL CSQ parts--including SHAQ" "2. Complete ALL CSQ parts--EXCEPT SHAQ" "3. BEGIN AFTER Elements NAMED" "4. BEGIN after COMPARING 3 elements at a time." "5. BEGIN after RATING all values"  "6. AFTER ratings, EXPLORE a Cognitive System in DEPTH" "7. Complete ONLY SHAQ." "8. LOAD, PROCESS, & VIEW CSQ/SHAQ data" "9. LOAD & VIEW CSYM data" "10. Only STORE & VIEW current data" "11. Only VIEW current data") "In csq-choices frame")
+(defparameter  *Default-CSQ-userdata-path NIL "Used as default in testing CSQ parts") ;;here66
+(defparameter  *csq-load-user-data-options  '("1. Load last user data" "2. Start user data from beginning."  "3. Load *Default-CSQ-userdata-path " "4. SELECT another user data path " "5. Use EXISTING DATA: DO NOT LOAD any data")  "In csq-choices frame")
 (defparameter *cs-explore-options '("1. Explore ONE Cog System in DEPTH" "2. Do NOT explore any Cog Systems") "In csq-choices frame")
 #|FROM SHAQ
 (defparameter  *go-frame-button-background :red)
@@ -184,7 +186,7 @@
     :visible-border T
    ;;only adds at bottom when use format? 
     :internal-border 8
-    :visible-min-height *title-pane-height  :visible-max-height *title-pane-height
+    :visible-min-height *title-pane-height  ;; :visible-max-height *title-pane-height
     :external-min-width *title-pane-width  ;; :external-max-width *title-pane-width
 ;;    :foreground *title-pane-foreground 
     :background *title-pane-background
@@ -208,7 +210,7 @@
                         )
     :visible-border T
     :internal-border 8
-    :visible-min-height *instr-pane-height :visible-max-height *instr-pane-height
+    :visible-min-height *instr-pane-height ;;:visible-max-height *instr-pane-height
     :external-min-width *instr-pane-width ;; :external-max-width *instr-pane-width
  ;;   :foreground *instr-pane-foreground 
     :background *instr-pane-background
@@ -270,13 +272,13 @@
    (row-layout-1
     capi:row-layout
     '(title-rich-text-pane)
-    ;;  :visible-min-height *title-pane-height
+    :visible-min-height *title-pane-height
     )   
    ;;second row --instructions text
    (row-layout-2
     capi:row-layout
     '(instr-rich-text-pane )
-    ;;   :visible-min-height *instructions-pane-height
+    :visible-min-height *instructions-pane-height
     )  
    ;;third row -- push buttons
    (button-row-layout
@@ -1524,7 +1526,7 @@
     :accepts-focus-p NIL
     ;;:internal-border 20
     ;;  :visible-min-height *quest-pane-height
-    :visible-max-height 40 ;; *quest-pane-height
+    :visible-max-height 80 ;; *quest-pane-height
     :visible-min-width *quest-pane-width ;; :visible-max-width *quest-pane-width
     :foreground *answer-pane-foreground 
     :background *answer-pane-background
@@ -1549,7 +1551,7 @@
     :accepts-focus-p NIL
     ;; :internal-border 20
     ;;  :visible-min-height *quest-pane-height
-    :visible-max-height 40 ;;*quest-pane-height
+    :visible-max-height 80 ;;*quest-pane-height
     :visible-min-width *quest-pane-width ;; :visible-max-width *quest-pane-width
     :foreground *answer-pane-foreground 
     :background *answer-pane-background
@@ -1768,7 +1770,7 @@
   (setf *text-input-OR-button-interface-textdata nil)
   (cond
    ((string-equal data (first *csq-load-user-data-options) )               
-    (setf  *csq-previous-data-file  *save-all-csq-data-file))
+    (setf  *csq-previous-data-file  *CSQ-USER-DATA-PATH))
    ((string-equal data (second *csq-load-user-data-options) )               
     (setf  *csq-previous-data-file NIL))
    ;;to type in pathname of saved user data
@@ -1793,24 +1795,6 @@
 
 
 
-
-
-;;MAKE-NEW-COMBOS-CALLBACK
-;;
-;;ddd
-(defun make-new-combos-callback (data interface)
-  " Causes *use-existing-elmsym-combos set to NIL "
-  (when data
-    (setf *use-existing-elmsym-combos nil))
-
-  ;; don't close interface here
- ;;;END AND POKE
-#|      (capi:destroy interface)
-      (when *run-csq-p
-        (mp:process-poke *csq-main-process))
-      (when *run-shaq-p
-        (mp:process-poke *shaq-main-process))|#
-  )
 
 
 

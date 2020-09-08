@@ -409,6 +409,7 @@
 ;;*SHAQ-QUESTION-VARIABLE-LISTS (qvar lists by categories)
 ;; FOR FORMAT, READ documnentation string below
 ;;
+;; (setf *ALL-CSQ-QVARS *SHAQ-question-variable-lists)
 ;;ddd
 (defparameter *SHAQ-question-variable-lists
   #| "MASTER LIST OF QUESTION INFORMATION:
@@ -471,45 +472,52 @@ Eg. (UGOALS =qvar (same as category in MSQs);  First list= primary qvar list= ( 
  "UserID"
  "spss-match?"
  NO-PC-INST-MATCH
+ :CSS $BIO :QT :TEXT-INPUT
  (:help nil nil)
   )
  ( "Sex"
  "Sex 1=M 2=F"
  "spss-match"
  NO-PC-INST-MATCH
+ :CSS $BIO :QT :TEXT-INPUT
  (:help nil nil)
   )
  ( "Age"
  "Age"
  "spss-match"
  NO-PC-INST-MATCH
+ :CSS $BIO :QT :TEXT-INPUT
  (:help nil nil)
   )
  ( "Email"
  "Email"
  "spss-match"
  NO-PC-INST-MATCH
+ :CSS $BIO :QT :TEXT-INPUT
  (:help nil nil)
   )
  ( "ZipCode"
  "ZipCode"
  "spss-match"
  NO-PC-INST-MATCH
+  :CSS $BIO :QT :TEXT-INPUT
  (:help nil nil)
   )
  ( "Nation"
  "Nation"
  "spss-match"
  NO-PC-INST-MATCH
+ :CSS $BIO :QT :TEXT-INPUT
  (:help nil nil)
   )
  ( "HrsWork"
  "HrsWork"
  "spss-match"
  NO-PC-INST-MATCH
+ :CSS $BIO :QT :TEXT-INPUT
  (:help nil nil)
   )
- ) 
+ )
 ;;older
 #|( "UserType"
  "User characteristics/assessment choices"
@@ -2135,8 +2143,7 @@ Questionnaire Selection-Part 2")
  ("stuMathApt" 15 "stumathaptQ" "int" PERCENTILE10 "questionInstancesArray" "frameTitle" "frameDimWidth" "frameDimHeight" "StudentBasicData.java")
  (:help nil nil)
   )
- ) (
- STUFEEL
+ ) ( STUFEEL
  ( "stulookf"
  "sa-Look forward to campus"
  "spss-match" 
@@ -2241,7 +2248,7 @@ Questionnaire Selection-Part 2")
  ("stuHappyGrades" "28" "stuHappyGradesQ" "int" "LikeMe7" "questionInstancesArray" "frameTitle" "frameDimWidth" "frameDimHeight" "StudentBasicData.java")
  (:help nil nil)
   )
- ) (
+ )   (
  STURESOURCE
  ("sturesource"     ;;WAS "acmaffec" CAUSED ERROR
  "am-All interference factors"
@@ -2719,8 +2726,8 @@ Questionnaire Selection-Part 2")
  ("lrnRSLOWread" "13" "lrnRSLOWreadQ" "int" "LikeMe7Reverse" "questionInstancesArray" "frameTitle" "frameDimWidth" "frameDimHeight" "bsLearningDisable.java")
  (:help nil nil)
   )
- ) (
- SM
+ ) 
+(SM
  ( "smtbusy"
  "sm-Rarely upset about too rushed"
  "spss-match"
@@ -3507,8 +3514,8 @@ Questionnaire Selection-Part 2")
  ("iecCodepProblem" "7" "iecCodepProblemQ" "int" "LikeMe7Reverse" "questionInstancesArray" "frameTitle" "frameDimWidth" "frameDimHeight" "iIEcontrol.java")
  (:help nil nil)
   )
- ) (
- WORLDVIEW
+ ) 
+(WORLDVIEW
  ( "wovprogr"
  "wv-World will improve"
  "spss-match"
@@ -5702,7 +5709,7 @@ Eg. (UGOALS =qvar (same as category in MSQs);  First list= primary qvar list= ( 
 
 
 ;;FOLLOWING USED TO ADD (:help nil nil) TO QVAR LIST BELOW
-#|(defun print-new-shaq-qvar-listsX (pathname)
+#|(defun print-new-shaq-qvarlistsX (pathname)
   (let
       ((SHAQ-question-variable-lists1
         (append-nth-item-in-2nd-nested-lists 5  '(:help nil nil) *SHAQ-question-variable-lists-NOHELP))
@@ -5714,7 +5721,7 @@ Eg. (UGOALS =qvar (same as category in MSQs);  First list= primary qvar list= ( 
   SHAQ-question-variable-lists1
   ))|#
 
-;; (print-new-shaq-qvar-listsX "c:/temp/tempfile.lisp")
+;; (print-new-shaq-qvarlistsX "c:/temp/tempfile.lisp")
 
 
 

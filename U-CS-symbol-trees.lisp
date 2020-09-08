@@ -1,7 +1,14 @@
 ;;*********************** U-CS-symbol-trees.lisp ***********************
 ;;
 ;; THESE FUNCTIONS MAKE A SYMBOL TREE FOR EACH SYMBOL
+
+;; ORIGINALLY USED FOR MAKING GROSBERG ART NETWORKS
+;; MAY WANT TO MODIFY THESE FOR SPECIFIC USE WITH CSSYMS
+
+;; CURRENTLY USE /MYUTILITIES/U-SYMBOL-TREES.LISP FOR ART
+
 ;;
+
 ;; SEE U-ART, AND U-TSTRING FOR FUNCTIONS USED BY THIS FILE
 ;; These functions were developed for use with ART3, but create a powerful database structure that integrates well with math, networks (with nodes and paths, etc);
 ;;
@@ -24,7 +31,7 @@
 (defun make-path-dimsym-tree (rootstr topdims dimspec-lists1 dimspec-lists2 
                                       &key (top-combo '((I L F)(I L F))) default-graph-slot
                                       (node-separator 'TO) (index-syms *art-index-syms) )
-  "In U-CS-symbol-trees.lisp Makes path symbols (eg WupI-L-FTOI-L-F) and sets them to symvals (eg (\"Wup\" (I L F TO I L F) NIL NIL subsims).  RETURNS all-labeled-newsyms."
+  "In U-CS-symbol-trees.lisp Makes path symbols (eg WUP-F-L-I-TO-F-L-I) and sets them to symvals (eg (\"Wup\" (I L F TO I L F) NIL NIL subsims).  RETURNS all-labeled-newsyms."
   (let*
       ((n-dims)
        (n-subdims1)
@@ -53,7 +60,7 @@
        (1dim-tree-dims (car top-combo))
        (n-1dims (list-length 1dim-tree-dims))
        ;;(new-syms)
-       (class-sym (my-make-symbol rootstr))
+       (class-sym (my-make-cs-symbol rootstr))
        )
     ;;make set class sym to symvals dim-specs and top-sym
     (set class-sym 
@@ -63,7 +70,7 @@
     ;;FOR FROM DIMS
     (setf  labeled-dims1 (make-1dimtree  1dim-tree-dims  n-1dims dimspec-lists1)
            labeled-dims2 (make-1dimtree  1dim-tree-dims  n-1dims  dimspec-lists2))
-    (afout 'out (format nil "AT 1: labeled-dims1= ~A~% labeled-dims2= ~A~% " labeled-dims1 labeled-dims2))
+    ;;(afout 'out (format nil "AT 1: labeled-dims1= ~A~% labeled-dims2= ~A~% " labeled-dims1 labeled-dims2))
     #|AT 1: labeled-dims1= ((F ((I L 2) (I L 3))) (L ((I 3 2) (I 4 2) (I 5 2)) ((I 3 3) (I 4 3) (I 5 3))) (I ((1 3 2) (2 3 2) (3 3 2) (4 3 2)) ((1 4 2) (2 4 2) (3 4 2) (4 4 2)) ((1 5 2) (2 5 2) (3 5 2) (4 5 2)) ((1 3 3) (2 3 3) (3 3 3) (4 3 3)) ((1 4 3) (2 4 3) (3 4 3) (4 4 3)) ((1 5 3) (2 5 3) (3 5 3) (4 5 3))))
  labeled-dims2= ((F ((I L 3) (I L 4))) (L ((I 1 3) (I 2 3)) ((I 1 4) (I 2 4))) (I ((1 1 3) (2 1 3) (3 1 3)) ((1 2 3) (2 2 3) (3 2 3)) ((1 1 4) (2 1 4) (3 1 4)) ((1 2 4) (2 2 4) (3 2 4))))|#
 
@@ -109,20 +116,20 @@
     ))
 ;;TEST
 ;; (PROGN (SETF OUT NIL)(make-path-dimsym-tree  "Tstx1" '(I L F TO I L F)  '((4 1 1)(3 3 1)(2 2 1))  '((3 1 1)(2 1 1)(2 3 1))))
-#|((TOP TOP (TSTX1I-L-FTOI-L-F)) (TOP M NIL) (M TOP NIL) (M M NIL) (M F NIL) (F M NIL) (F F (TSTX1I-L-2TOI-L-3 TSTX1I-L-2TOI-L-4 TSTX1I-L-3TOI-L-3 TSTX1I-L-3TOI-L-4)) (F L NIL) (L F NIL) (L L (TSTX1I-3-2TOI-1-3 TSTX1I-3-2TOI-2-3 TSTX1I-4-2TOI-1-3 TSTX1I-4-2TOI-2-3 TSTX1I-5-2TOI-1-3 TSTX1I-5-2TOI-2-3)) (L I NIL) (I L NIL) (I I (TSTX11-3-2TO1-1-3 TSTX11-3-2TO2-1-3 TSTX11-3-2TO3-1-3 TSTX12-3-2TO1-1-3 TSTX12-3-2TO2-1-3 TSTX12-3-2TO3-1-3 TSTX13-3-2TO1-1-3 TSTX13-3-2TO2-1-3 TSTX13-3-2TO3-1-3 TSTX14-3-2TO1-1-3 TSTX14-3-2TO2-1-3 TSTX14-3-2TO3-1-3)) (REST-COMBOS NIL NIL))
-((TSTX1I-L-FTOI-L-F) NIL NIL NIL NIL NIL (TSTX1I-L-2TOI-L-3 TSTX1I-L-2TOI-L-4 TSTX1I-L-3TOI-L-3 TSTX1I-L-3TOI-L-4) NIL NIL (TSTX1I-3-2TOI-1-3 TSTX1I-3-2TOI-2-3 TSTX1I-4-2TOI-1-3 TSTX1I-4-2TOI-2-3 TSTX1I-5-2TOI-1-3 TSTX1I-5-2TOI-2-3) NIL NIL (TSTX11-3-2TO1-1-3 TSTX11-3-2TO2-1-3 TSTX11-3-2TO3-1-3 TSTX12-3-2TO1-1-3 TSTX12-3-2TO2-1-3 TSTX12-3-2TO3-1-3 TSTX13-3-2TO1-1-3 TSTX13-3-2TO2-1-3 TSTX13-3-2TO3-1-3 TSTX14-3-2TO1-1-3 TSTX14-3-2TO2-1-3 TSTX14-3-2TO3-1-3) NIL)
+#|((TOP TOP (TSTX1F-L-ITOF-L-I)) (TOP M NIL) (M TOP NIL) (M M NIL) (M F NIL) (F M NIL) (F F (TSTX1I-L-2TOI-L-3 TSTX1I-L-2TOI-L-4 TSTX1I-L-3TOI-L-3 TSTX1I-L-3TOI-L-4)) (F L NIL) (L F NIL) (L L (TSTX1I-3-2TOI-1-3 TSTX1I-3-2TOI-2-3 TSTX1I-4-2TOI-1-3 TSTX1I-4-2TOI-2-3 TSTX1I-5-2TOI-1-3 TSTX1I-5-2TOI-2-3)) (L I NIL) (I L NIL) (I I (TSTX11-3-2TO1-1-3 TSTX11-3-2TO2-1-3 TSTX11-3-2TO3-1-3 TSTX12-3-2TO1-1-3 TSTX12-3-2TO2-1-3 TSTX12-3-2TO3-1-3 TSTX13-3-2TO1-1-3 TSTX13-3-2TO2-1-3 TSTX13-3-2TO3-1-3 TSTX14-3-2TO1-1-3 TSTX14-3-2TO2-1-3 TSTX14-3-2TO3-1-3)) (REST-COMBOS NIL NIL))
+((TSTX1F-L-ITOF-L-I) NIL NIL NIL NIL NIL (TSTX1I-L-2TOI-L-3 TSTX1I-L-2TOI-L-4 TSTX1I-L-3TOI-L-3 TSTX1I-L-3TOI-L-4) NIL NIL (TSTX1I-3-2TOI-1-3 TSTX1I-3-2TOI-2-3 TSTX1I-4-2TOI-1-3 TSTX1I-4-2TOI-2-3 TSTX1I-5-2TOI-1-3 TSTX1I-5-2TOI-2-3) NIL NIL (TSTX11-3-2TO1-1-3 TSTX11-3-2TO2-1-3 TSTX11-3-2TO3-1-3 TSTX12-3-2TO1-1-3 TSTX12-3-2TO2-1-3 TSTX12-3-2TO3-1-3 TSTX13-3-2TO1-1-3 TSTX13-3-2TO2-1-3 TSTX13-3-2TO3-1-3 TSTX14-3-2TO1-1-3 TSTX14-3-2TO2-1-3 TSTX14-3-2TO3-1-3) NIL)
 CL-USER 8 > Tstx1
-("Tstx1" (((4 1 1) (3 3 1) (2 2 1)) TO ((3 1 1) (2 1 1) (2 3 1))) NIL NIL (TSTX1I-L-FTOI-L-F))
-CL-USER 9 > TSTX1I-L-FTOI-L-F
-("Tstx1" (I L F TO I L F) NIL NIL ((TSTX1I-L-FTOI-L-F) (TSTX1I-L-2TOI-L-3 TSTX1I-L-2TOI-L-4 TSTX1I-L-3TOI-L-3 TSTX1I-L-3TOI-L-4)))|#
+("Tstx1" (((4 1 1) (3 3 1) (2 2 1)) TO ((3 1 1) (2 1 1) (2 3 1))) NIL NIL (TSTX1F-L-ITOF-L-I))
+CL-USER 9 > TSTX1F-L-ITOF-L-I
+("Tstx1" (I L F TO I L F) NIL NIL ((TSTX1F-L-ITOF-L-I) (TSTX1I-L-2TOI-L-3 TSTX1I-L-2TOI-L-4 TSTX1I-L-3TOI-L-3 TSTX1I-L-3TOI-L-4)))|#
 ;;
 ;; (PROGN (SETF OUT NIL)(make-path-dimsym-tree  "Test1" '(I L F TO I L F)  '((4 1 1)(3 3 1)(2 2 1))  '((3 1 1)(2 1 1)(2 3 1))))
 ;;works=
-;; all-labeled-newsyms: (TOP TOP (TEST1I-L-FTOI-L-F) TOP M NIL M TOP NIL M M NIL M F NIL F M NIL F F (TEST1I-L-2TOI-L-3 TEST1I-L-2TOI-L-4 TEST1I-L-3TOI-L-3 TEST1I-L-3TOI-L-4) F L NIL L F NIL L L (TEST1I-3-2TOI-1-3 TEST1I-3-2TOI-2-3 TEST1I-4-2TOI-1-3 TEST1I-4-2TOI-2-3 TEST1I-5-2TOI-1-3 TEST1I-5-2TOI-2-3) L I NIL I L NIL I I (TEST11-3-2TO1-1-3 TEST11-3-2TO2-1-3 TEST11-3-2TO3-1-3 TEST12-3-2TO1-1-3 TEST12-3-2TO2-1-3 TEST12-3-2TO3-1-3 TEST13-3-2TO1-1-3 TEST13-3-2TO2-1-3 TEST13-3-2TO3-1-3 TEST14-3-2TO1-1-3 TEST14-3-2TO2-1-3 TEST14-3-2TO3-1-3) REST-COMBOS NIL NIL)
-;; all-newsyms:  ((TEST1I-L-FTOI-L-F) NIL NIL NIL NIL NIL (TEST1I-L-2TOI-L-3 TEST1I-L-2TOI-L-4 TEST1I-L-3TOI-L-3 TEST1I-L-3TOI-L-4) NIL NIL (TEST1I-3-2TOI-1-3 TEST1I-3-2TOI-2-3 TEST1I-4-2TOI-1-3 TEST1I-4-2TOI-2-3 TEST1I-5-2TOI-1-3 TEST1I-5-2TOI-2-3) NIL NIL (TEST11-3-2TO1-1-3 TEST11-3-2TO2-1-3 TEST11-3-2TO3-1-3 TEST12-3-2TO1-1-3 TEST12-3-2TO2-1-3 TEST12-3-2TO3-1-3 TEST13-3-2TO1-1-3 TEST13-3-2TO2-1-3 TEST13-3-2TO3-1-3 TEST14-3-2TO1-1-3 TEST14-3-2TO2-1-3 TEST14-3-2TO3-1-3) NIL)
+;; all-labeled-newsyms: (TOP TOP (TEST1F-L-ITOF-L-I) TOP M NIL M TOP NIL M M NIL M F NIL F M NIL F F (TEST1I-L-2TOI-L-3 TEST1I-L-2TOI-L-4 TEST1I-L-3TOI-L-3 TEST1I-L-3TOI-L-4) F L NIL L F NIL L L (TEST1I-3-2TOI-1-3 TEST1I-3-2TOI-2-3 TEST1I-4-2TOI-1-3 TEST1I-4-2TOI-2-3 TEST1I-5-2TOI-1-3 TEST1I-5-2TOI-2-3) L I NIL I L NIL I I (TEST11-3-2TO1-1-3 TEST11-3-2TO2-1-3 TEST11-3-2TO3-1-3 TEST12-3-2TO1-1-3 TEST12-3-2TO2-1-3 TEST12-3-2TO3-1-3 TEST13-3-2TO1-1-3 TEST13-3-2TO2-1-3 TEST13-3-2TO3-1-3 TEST14-3-2TO1-1-3 TEST14-3-2TO2-1-3 TEST14-3-2TO3-1-3) REST-COMBOS NIL NIL)
+;; all-newsyms:  ((TEST1F-L-ITOF-L-I) NIL NIL NIL NIL NIL (TEST1I-L-2TOI-L-3 TEST1I-L-2TOI-L-4 TEST1I-L-3TOI-L-3 TEST1I-L-3TOI-L-4) NIL NIL (TEST1I-3-2TOI-1-3 TEST1I-3-2TOI-2-3 TEST1I-4-2TOI-1-3 TEST1I-4-2TOI-2-3 TEST1I-5-2TOI-1-3 TEST1I-5-2TOI-2-3) NIL NIL (TEST11-3-2TO1-1-3 TEST11-3-2TO2-1-3 TEST11-3-2TO3-1-3 TEST12-3-2TO1-1-3 TEST12-3-2TO2-1-3 TEST12-3-2TO3-1-3 TEST13-3-2TO1-1-3 TEST13-3-2TO2-1-3 TEST13-3-2TO3-1-3 TEST14-3-2TO1-1-3 TEST14-3-2TO2-1-3 TEST14-3-2TO3-1-3) NIL)
 #| PPRINT all-labeled-newsyms:
 (TOP  TOP:  
-      (TEST1F-L-ITOF-L-I) = ("Test1" (I L F TO I L F) NIL NIL ((TEST1I-L-FTOI-L-F) (TEST1I-L-2TOI-L-3 TEST1I-L-2TOI-L-4 TEST1I-L-3TOI-L-3 TEST1I-L-3TOI-L-4)))
+      (TEST1F-L-ITOF-L-I) = ("Test1" (I L F TO I L F) NIL NIL ((TEST1F-L-ITOF-L-I) (TEST1I-L-2TOI-L-3 TEST1I-L-2TOI-L-4 TEST1I-L-3TOI-L-3 TEST1I-L-3TOI-L-4)))
  TOP  M  NIL
  M  TOP  NIL
  M M  NIL
@@ -199,7 +206,7 @@ CL-USER 9 > TSTX1I-L-FTOI-L-F
        ( labeled-combos-by-level)
        )
     (loop
-     for combo-group1 in labeled-list1 ;;(I L F M)
+     for combo-group1 in labeled-list1 ;;(M F L I)
      for combo-group2 in labeled-list2
      do
      (setf label1 (car combo-group1)
@@ -434,7 +441,7 @@ CL-USER 9 > TSTX1I-L-FTOI-L-F
      (cond
       ((member 'M dims)
        (setf level-M (append level (list dims))
-             top-level '(I L F M)))
+             top-level '(M F L I)))
       ((member 'F dims)
        (unless top-level  (setf top-level '(I L F)))
        (unless (member dims level-F :test 'equal)
@@ -645,11 +652,15 @@ NIL|#
 ;;
 ;;ddd
 (defun make-dimsyms-trees (all-syms-spec-list 
-                           &key (node-separator  *art-node-separator)
+                           &key (node-separator  *art-node-separator) ;;'TO
                            (separator-str *art-index-separator)
-                           (index-syms *art-index-syms)
+                           (index-syms *art-index-syms) ;;(M F L I)
                            parse-dimlist1-p (parse-dimlist2-p T))
-  "U-CS-symbol-trees.lisp. TOP ARTSYM CREATING FUNCTION. Makes one symbol tree for EACH sym-spec-list in all-syms-spec-list. Sets each symbol to a list (root dimlist nil subsym-list).  RETURNS  (values all-root-syms all-node-trees-syms all-path-syms-by-levels). Either makes node symbols eg XI-L-F, X9-2-3 OR path symbols eg. WUPI-L-FTOI-L-F  WUP7-3-2TO4-1-3. Sets  higher level symbols' value to subsyms."
+  "U-CS-symbol-trees.lisp. NEW2019: artdims incl ALL parts of artsyms eg. (X M L F I) or (HS F L I TO HS F L I) with *art-index-separator connecting dims.
+  TOP ARTSYM CREATING FUNCTION. Makes one symbol tree for EACH sym-spec-list in all-syms-spec-list. Sets each symbol to a list:NEW (artsym dimlist nil subsym-list)
+;;was (root dimlist nil subsym-list).  (WUP F L I TO F L I) the TO,FR, or TF tells direction.
+  RETURNS  (values all-artsyms all-path-syms-by-levels)
+;;was (values all-root-syms all-node-trees-syms all-path-syms-by-levels). Either makes node symbols eg X.M.F.L.I, X.2.9.2.3 OR path symbols eg. WUP.F.L.I.TO.F.L.I  WUP.7.3.2.TO.4.1.3. Sets  higher level symbols' value to subsyms."
   (let
       ((sym)
        (dimlist)
@@ -677,8 +688,8 @@ NIL|#
        )
 
     ;;FOR EACH NEW SYM; topsym-spec-list:
-    ;;NODE/VAR  eg (XI-L-F ("X" ((,*n-inputs 1 1 )(3 1 1    )(3 1 1 ))))
-    ;;PATH eg. (WDNI-L-FTOI-L-F ("Wdn" ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   )TO (,*n-inputs 1 1  )(1 3 1  )(1 2 1 ))))
+    ;;NODE/VAR  eg (X-F-L-I ("X" ((,*1 1 ,*n-inputs )(3 1 1    )(3 1 1 ))))
+    ;;PATH eg. (WDN-F-L-I-TO-F-L-I ("Wdn" ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   )TO (,*1 1 ,*n-inputs  )(1 3 1  )(1 2 1 ))))
     (loop
      for topsym-spec-list in all-syms-spec-list
      do
@@ -688,8 +699,8 @@ NIL|#
            sym-default-graph-slot (third topsym-spec-list)
            symroot (car sym-spec-list)
            dims-spec-list (second sym-spec-list) 
-           ;;eg ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   )TO (,*n-inputs 1 1  )(1 3 1  )(1 2 1 ))
-           root-sym (my-make-symbol symroot)
+           ;;eg ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   )TO (,*1 1 ,*n-inputs  )(1 3 1  )(1 2 1 ))
+           root-sym (my-make-cs-symbol symroot)
            all-root-syms (append all-root-syms (list root-sym)))
 
      ;;SEPARATE PATHS FROM NODES/VARS
@@ -731,7 +742,7 @@ NIL|#
          (set  root-sym (append sym-spec-list (list sym-default-graph-slot))))
        ;;set the sym to its symvals
        (cond
-        ;;if sym exists (eg sym=XI-L-F), do nothing
+        ;;if sym exists (eg sym=X-F-L-I), do nothing
         ((boundp sym) NIL)        
         ((and sym dimlist) 
          (set sym (list symroot dimlist)))
@@ -740,7 +751,7 @@ NIL|#
 
        ;;add sym to the symroot subsymvals (if not already there)
        (setsubsyms  root-sym  sym)
-       ;;eg root-sym= X  sym=XI-L-F
+       ;;eg root-sym= X  sym=X-F-L-I
        (loop
         for topsym-spec-list in all-syms-spec-list
         do
@@ -764,12 +775,13 @@ NIL|#
         )))
      ;;end all-syms-spec-list loop
      )
-    (values all-root-syms all-node-trees-syms all-path-syms-by-levels)
+    (values all-root-syms all-root-syms all-node-trees-syms all-path-syms-by-levels)
+    ;;was (values all-root-syms all-root-syms all-node-trees-syms all-path-syms-by-levels)
     ;;end let, make-dimsyms-trees
     ))
 ;;TEST
 ;; TEST MAKING FIELD 1 AND FIELD 2 NODES W/ DIF Ns
-;; (make-dimsyms-trees  '((TestXI-L-F  ("TestX" ((5 1 1 )(2 1 1)(2 1 1 )))) (TestXI-L-F  ("TestX" ((3 1 1 )(1 3 1)(1 3 1 ))))))
+;; (make-dimsyms-trees  '((TestX-F-L-I  ("TestX" ((5 1 1 )(2 1 1)(2 1 1 )))) (TestX-F-L-I  ("TestX" ((3 1 1 )(1 3 1)(1 3 1 ))))))
 ;;RESULTS=
 ;;(TESTX TESTX)
 #|PPRINTED: 
@@ -791,8 +803,8 @@ NIL|#
  ((TESTXI-L-3) (TESTXI-3-3) (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3)))
 NIL|#
 #|;;SAMPLE SUBSYMS
- TESTX = ("TestX" ((3 1 1) (1 3 1) (1 3 1)) NIL NIL (TESTXI-L-F))
- TESTXI-L-F = ("TestX" (I L F) NIL NIL (TESTXI-L-1 TESTXI-L-2 TESTXI-L-3))
+ TESTX = ("TestX" ((3 1 1) (1 3 1) (1 3 1)) NIL NIL (TESTX-F-L-I))
+ TESTX-F-L-I = ("TestX" (I L F) NIL NIL (TESTXI-L-1 TESTXI-L-2 TESTXI-L-3))
 ;;From 5 node FIELD 1:
  TESTXI-L-1 = ("TestX" (I L 1) NIL NIL (TESTXI-1-1 TESTXI-2-1))
  TESTXI-1-1 = ("TestX" (I 1 1) NIL NIL (TESTX1-1-1 TESTX2-1-1 TESTX3-1-1 TESTX4-1-1 TESTX5-1-1))
@@ -804,39 +816,39 @@ TESTXI-3-3 = ("TestX" (I 3 3) NIL NIL (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3))
 
 ;;
 ;;FOR NODES
-;; (progn (setf *out1 nil *out2 nil) (make-dimsyms-trees '((INPUTI-L-F ("Input" ((5 1 1)(1 1 1 )(1 1 1)))))))
+;; (progn (setf *out1 nil *out2 nil) (make-dimsyms-trees '((INPUT-F-L-I ("Input" ((5 1 1)(1 1 1 )(1 1 1)))))))
 ;; WORKS= (((INPUTI-I-L-1) (INPUTI-I-1-1) (INPUTI-1-1-1 INPUTI-2-1-1 INPUTI-3-1-1 INPUTI-4-1-1 INPUTI-5-1-1)))  NIL
-;; INPUT = ("Input" ((5 1 1) (1 1 1) (1 1 1)) NIL NIL ((INPUTI-L-F)))
+;; INPUT = ("Input" ((5 1 1) (1 1 1) (1 1 1)) NIL NIL ((INPUT-F-L-I)))
 ;;
-;; (progn (setf *out1 nil *out2 nil) (make-dimsyms-trees '((XI-L-F  ("X" ((5 1 1 )(3 1 1)(3 1 1 ))) x-points))))
+;; (progn (setf *out1 nil *out2 nil) (make-dimsyms-trees '((X-F-L-I  ("X" ((5 1 1 )(3 1 1)(3 1 1 ))) x-points))))
 ;;works= (((XI-L-1 XI-L-2 XI-L-3) (XI-1-1 XI-2-1 XI-3-1) (X1-1-1 X2-1-1 X3-1-1 X4-1-1 X5-1-1) (X1-2-1 X2-2-1 X3-2-1 X4-2-1 X5-2-1) (X1-3-1 X2-3-1 X3-3-1 X4-3-1 X5-3-1) (XI-1-2 XI-2-2 XI-3-2) (X1-1-2 X2-1-2 X3-1-2 X4-1-2 X5-1-2) (X1-2-2 X2-2-2 X3-2-2 X4-2-2 X5-2-2) (X1-3-2 X2-3-2 X3-3-2 X4-3-2 X5-3-2) (XI-1-3 XI-2-3 XI-3-3) (X1-1-3 X2-1-3 X3-1-3 X4-1-3 X5-1-3) (X1-2-3 X2-2-3 X3-2-3 X4-2-3 X5-2-3) (X1-3-3 X2-3-3 X3-3-3 X4-3-3 X5-3-3)))    NIL
-;;CL-USER 22 > X  = ("X" ((5 1 1) (3 1 1) (3 1 1)) X-POINTS NIL ((XI-L-F)))
+;;CL-USER 22 > X  = ("X" ((5 1 1) (3 1 1) (3 1 1)) X-POINTS NIL ((X-F-L-I)))
 ;;
 ;;FOR PATHS
-;;SS? FIX;;;; (progn (setf *out1 nil *out2 nil)  (make-dimsyms-trees '((UUPI-L-FTOI-L-F ("Uup" ((5 1 1"")(1 3 1)(1 2 1)TO (3 1 1 )  (1 1 1)(1 3 1)))))) )
-;; works= (UUP) NIL   (((TOP TOP (UUPI-L-FTOI-L-F)) (TOP M NIL) (M TOP NIL) (M M NIL) (M F NIL) (F M NIL) (F F (UUPI-L-2TOI-L-3)) (F L NIL) (L F NIL) (L L (UUPI-3-2TOI-1-3)) (L I NIL) (I L NIL) (I I (UUP1-3-2TO1-1-3 UUP1-3-2TO2-1-3 UUP1-3-2TO3-1-3 UUP2-3-2TO1-1-3 UUP2-3-2TO2-1-3 UUP2-3-2TO3-1-3 UUP3-3-2TO1-1-3 UUP3-3-2TO2-1-3 UUP3-3-2TO3-1-3 UUP4-3-2TO1-1-3 UUP4-3-2TO2-1-3 UUP4-3-2TO3-1-3 UUP5-3-2TO1-1-3 UUP5-3-2TO2-1-3 UUP5-3-2TO3-1-3)) (REST-COMBOS NIL NIL)))
-;; CL-USER 57 > UUP =  ("Uup" (((5 1 1 "") (1 3 1) (1 2 1)) TO ((3 1 1) (1 1 1) (1 3 1))) NIL NIL (UUPI-L-FTOI-L-F))
+;;SS? FIX;;;; (progn (setf *out1 nil *out2 nil)  (make-dimsyms-trees '((UUPF-L-ITOF-L-I ("Uup" ((5 1 1"")(1 3 1)(1 2 1)TO (3 1 1 )  (1 1 1)(1 3 1)))))) )
+;; works= (UUP) NIL   (((TOP TOP (UUPF-L-ITOF-L-I)) (TOP M NIL) (M TOP NIL) (M M NIL) (M F NIL) (F M NIL) (F F (UUPI-L-2TOI-L-3)) (F L NIL) (L F NIL) (L L (UUPI-3-2TOI-1-3)) (L I NIL) (I L NIL) (I I (UUP1-3-2TO1-1-3 UUP1-3-2TO2-1-3 UUP1-3-2TO3-1-3 UUP2-3-2TO1-1-3 UUP2-3-2TO2-1-3 UUP2-3-2TO3-1-3 UUP3-3-2TO1-1-3 UUP3-3-2TO2-1-3 UUP3-3-2TO3-1-3 UUP4-3-2TO1-1-3 UUP4-3-2TO2-1-3 UUP4-3-2TO3-1-3 UUP5-3-2TO1-1-3 UUP5-3-2TO2-1-3 UUP5-3-2TO3-1-3)) (REST-COMBOS NIL NIL)))
+;; CL-USER 57 > UUP =  ("Uup" (((5 1 1 "") (1 3 1) (1 2 1)) TO ((3 1 1) (1 1 1) (1 3 1))) NIL NIL (UUPF-L-ITOF-L-I))
 
 
 ;;THE LEVELS
 ;;
-;; (setf *testsymspecs '( (XI-L-F ("X" ((5 1 1 )(3 1 1)(3 1 1)))) (UUPI-L-FTOI-L-F ("Uup" ((5 1 1"")(1 3 1)(1 2 1)TO (3 1 1 )  (1 1 1)(1 3 1))))))
+;; (setf *testsymspecs '( (X-F-L-I ("X" ((5 1 1 )(3 1 1)(3 1 1)))) (UUPF-L-ITOF-L-I ("Uup" ((5 1 1"")(1 3 1)(1 2 1)TO (3 1 1 )  (1 1 1)(1 3 1))))))
 ;; (make-dimsyms-trees *testsymspecs)
 ;;RESULTS= [all one list]
-;; ((XI-L-F ("X" ((5 1 1) (3 1 1) (3 1 1))) ((XI-L-1 XI-L-2 XI-L-3) (XI-1-1 XI-2-1 XI-3-1) (X1-1-1 X2-1-1 X3-1-1 X4-1-1 X5-1-1) (X1-2-1 X2-2-1 X3-2-1 X4-2-1 X5-2-1) (X1-3-1 X2-3-1 X3-3-1 X4-3-1 X5-3-1) (XI-1-2 XI-2-2 XI-3-2) (X1-1-2 X2-1-2 X3-1-2 X4-1-2 X5-1-2) (X1-2-2 X2-2-2 X3-2-2 X4-2-2 X5-2-2) (X1-3-2 X2-3-2 X3-3-2 X4-3-2 X5-3-2) (XI-1-3 XI-2-3 XI-3-3) (X1-1-3 X2-1-3 X3-1-3 X4-1-3 X5-1-3) (X1-2-3 X2-2-3 X3-2-3 X4-2-3 X5-2-3) (X1-3-3 X2-3-3 X3-3-3 X4-3-3 X5-3-3))) 
+;; ((X-F-L-I ("X" ((5 1 1) (3 1 1) (3 1 1))) ((XI-L-1 XI-L-2 XI-L-3) (XI-1-1 XI-2-1 XI-3-1) (X1-1-1 X2-1-1 X3-1-1 X4-1-1 X5-1-1) (X1-2-1 X2-2-1 X3-2-1 X4-2-1 X5-2-1) (X1-3-1 X2-3-1 X3-3-1 X4-3-1 X5-3-1) (XI-1-2 XI-2-2 XI-3-2) (X1-1-2 X2-1-2 X3-1-2 X4-1-2 X5-1-2) (X1-2-2 X2-2-2 X3-2-2 X4-2-2 X5-2-2) (X1-3-2 X2-3-2 X3-3-2 X4-3-2 X5-3-2) (XI-1-3 XI-2-3 XI-3-3) (X1-1-3 X2-1-3 X3-1-3 X4-1-3 X5-1-3) (X1-2-3 X2-2-3 X3-2-3 X4-2-3 X5-2-3) (X1-3-3 X2-3-3 X3-3-3 X4-3-3 X5-3-3))) 
 ;;ALSO
 ;; FOR NODE:
-;; level 1: XI-L-F = ("X" (I L F) NIL (XI-L-1 XI-L-2 XI-L-3))
+;; level 1: X-F-L-I = ("X" (I L F) NIL (XI-L-1 XI-L-2 XI-L-3))
 ;; level 2: eg XI-L-2 = ("X" (I L 2) NIL (XI-1-2 XI-2-2 XI-3-2))
 ;; level 3: eg  XI-1-2 = ("X" (I 1 2) NIL (X1-1-2 X2-1-2 X3-1-2 X4-1-2 X5-1-2))
 ;; level 4-values: eg.  X3-1-2 = ("X" (3 1 2) NIL NIL)
 ;;
 ;;FOR PATH -- pprint
-#|((UUPI-L-FTOI-L-F
+#|((UUPF-L-ITOF-L-I
   ("Uup" ((5 1 1 "") (1 3 1) (1 2 1) TO (3 1 1) (1 1 1) (1 3 1)))
-  ((UUPI-L-FTOI-L-3)
-   (UUPI-L-FTOI-1-3)
-   (UUPI-L-FTO1-1-3 UUPI-L-FTO2-1-3 UUPI-L-FTO3-1-3)
+  ((UUPF-L-ITOI-L-3)
+   (UUPF-L-ITOI-1-3)
+   (UUPF-L-ITO1-1-3 UUPF-L-ITO2-1-3 UUPF-L-ITO3-1-3)
    (UUPI-L-2TO1-1-3)
    (UUPI-3-2-TO1-1-3)
    (UUP1-3-2TO1-1-3 UUP2-3-2TO1-1-3 UUP3-3-2TO1-1-3 UUP4-3-2TO1-1-3 UUP5-3-2TO1-1-3)
@@ -852,11 +864,11 @@ TESTXI-3-3 = ("TestX" (I 3 3) NIL NIL (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3))
     UUP5-3-2TO3-1-3))))|#
 ;;
 ;; FOR SUBDIMS2 -------------------------
-;;LEVEL 1:  UUPI-L-FTOI-L-3 = ("Uup" (I L F TO I L 3) NIL (UUPI-L-FTOI-1-3))
-;;LEVEL 2:  UUPI-L-FTOI-1-3 = ("Uup" (I L F TO I 1 3) NIL (UUPI-L-FTO1-1-3 UUPI-L-FTO2-1-3 UUPI-L-FTO3-1-3))
-;;LEVEL 3:  UUPI-L-FTO1-1-3 = ("Uup" (I L F TO 1 1 3) NIL (UUPI-L-2TO1-1-3))
-;;                   UUPI-L-FTO2-1-3 = ("Uup" (I L F TO 2 1 3) NIL (UUPI-L-2TO2-1-3))
-;;                   UUPI-L-FTOI-1-3  = ("Uup" (I L F TO I 1 3) NIL (UUPI-L-FTO1-1-3 UUPI-L-FTO2-1-3 UUPI-L-FTO3-1-3))
+;;LEVEL 1:  UUPF-L-ITOI-L-3 = ("Uup" (I L F TO I L 3) NIL (UUPF-L-ITOI-1-3))
+;;LEVEL 2:  UUPF-L-ITOI-1-3 = ("Uup" (I L F TO I 1 3) NIL (UUPF-L-ITO1-1-3 UUPF-L-ITO2-1-3 UUPF-L-ITO3-1-3))
+;;LEVEL 3:  UUPF-L-ITO1-1-3 = ("Uup" (I L F TO 1 1 3) NIL (UUPI-L-2TO1-1-3))
+;;                   UUPF-L-ITO2-1-3 = ("Uup" (I L F TO 2 1 3) NIL (UUPI-L-2TO2-1-3))
+;;                   UUPF-L-ITOI-1-3  = ("Uup" (I L F TO I 1 3) NIL (UUPF-L-ITO1-1-3 UUPF-L-ITO2-1-3 UUPF-L-ITO3-1-3))
 ;; Note no values above bec must be at bottom level 
 ;;
 ;;FOR SUBDIMS1 ---------------------------
@@ -874,28 +886,28 @@ TESTXI-3-3 = ("TestX" (I 3 3) NIL NIL (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3))
 
 
 ;;MORE TESTING FOR ALL  zzzz
-;; ;; (progn (setf out nil) (make-dimsyms-trees    `((INPUTI-L-F ("Input" ((5 1 1)(1 1 1 )(1 1 1)))  input-points) (XI-L-F   ("X" ((5 1 1 )(3 1 1)(3 1 1 ))) x-points)     (YI-L-F  ("Y"((5 1 1 )(3 1 1   )(3 1 1 ))) y-points) )))
+;; ;; (progn (setf out nil) (make-dimsyms-trees    `((INPUT-F-L-I ("Input" ((5 1 1)(1 1 1 )(1 1 1)))  input-points) (X-F-L-I   ("X" ((5 1 1 )(3 1 1)(3 1 1 ))) x-points)     (Y-F-L-I  ("Y"((5 1 1 )(3 1 1   )(3 1 1 ))) y-points) )))
 ;;add these??
-         ;; ("X-Activity" ((,*n-inputs 1 1 )) )  ;;was X-Activity
-         ;; ("V-Activity" ((,*n-inputs 1 1 )) )  ;;V-Activity
-          ;;(RI-L-F  ("R" ((,*n-inputs 1 1 )(1 1 1)(1 1 1)) ))
-          ;;("Q-Activity" ((,*n-inputs 1 1 )) )
-          ;;("P" ((,*n-inputs 1 1 )) )
+         ;; ("X-Activity" ((,*1 1 ,*n-inputs )) )  ;;was X-Activity
+         ;; ("V-Activity" ((,*1 1 ,*n-inputs )) )  ;;V-Activity
+          ;;(R-F-L-I  ("R" ((,*1 1 ,*n-inputs )(1 1 1)(1 1 1)) ))
+          ;;("Q-Activity" ((,*1 1 ,*n-inputs )) )
+          ;;("P" ((,*1 1 ,*n-inputs )) )
           ;; (var-root (fromcelldim fromfielddim  tocelldim tofielddim))   EACH DIM SPEC= (N  begin incr end-str) 
-#|          (WUPI-L-FTOI-L-F  ("Wup" ((,*n-inputs  1 1)(1 3 1)(1 2 1   ) TO (,*n-outputs 1 1) (1 1 1   )(1 3 1 ))) wup-points)            ;;was ((,*n-inputs 1 1 ) (,*n-outputs 1 1) ))
-          (WDNI-L-FTOI-L-F ("Wdn" ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   )TO (,*n-inputs 1 1  )(1 3 1  )(1 2 1 ))) wdn-points)
-          (UUPI-L-FTOI-L-F ("Uup" ((,*n-inputs 1 1)(1 3 1  )(1 2 1   )TO (,*n-outputs 1 1   )(1 1 1   )(1 3 1 ))) uup-points)        
-          (UDNI-L-FTOI-L-F ("Udn" ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   ) TO (,*n-inputs 1 1  )(1 3 1  )(1 2 1 ))) udn-points)
+#|          (WUP-F-L-I-TO-F-L-I  ("Wup" ((,*1 1 ,*n-inputs)(1 3 1)(1 2 1   ) TO (,*n-outputs 1 1) (1 1 1   )(1 3 1 ))) wup-points)            ;;was ((,*1 1 ,*n-inputs ) (,*n-outputs 1 1) ))
+          (WDN-F-L-I-TO-F-L-I ("Wdn" ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   )TO (,*1 1 ,*n-inputs  )(1 3 1  )(1 2 1 ))) wdn-points)
+          (UUPF-L-ITOF-L-I ("Uup" ((,*1 1 ,*n-inputs)(1 3 1  )(1 2 1   )TO (,*n-outputs 1 1   )(1 1 1   )(1 3 1 ))) uup-points)        
+          (UDNF-L-ITOF-L-I ("Udn" ((,*n-outputs 1 1  )(1 1 1   )(1 3 1   ) TO (,*1 1 ,*n-inputs  )(1 3 1  )(1 2 1 ))) udn-points)
          ;; ("Y-Output" ((,*n-outputs 1 1)) )
           ;;others
          ;;("Temp" ((1 1 1 )) )
-          (RESETI-L-F ("reset" ((,*n-inputs 1 1  )(1 2 1 ) (2 2 1 ))) reset-points)
+          (RESETF-L-I ("reset" ((,*1 1 ,*n-inputs  )(1 2 1 ) (2 2 1 ))) reset-points)
           ;;for ART3 F2
           ;;SSS  CHECK CREATION OF THE SYMVALS ETC
-          ;;(RESET-NINPUTSI  ("reset-ninputs" ((,*n-inputs 1 1))))
+          ;;(RESET-NINPUTSI  ("reset-ninputs" ((,*1 1 ,*n-inputs))))
           ;;for ART3 F3
           ;;(RESET-NOUTPUTSI ("reset-noutputs" ((,*n-outputs 1 1)) ))
-          (RESET-CNTRI-L-F ("reset-cntr" ((,*n-outputs 1 1)(1 2 1)(1 2 1) )))
+          (RESET-CNTR-F-L-I ("reset-cntr" ((,*n-outputs 1 1)(1 2 1)(1 2 1) )))
         ;;  (N-CATSI ("n-cats" ((,*n-outputs 1 1 ))))   ;;was(1 2 1)) )
           ;;("Temp2" ((,*n-outputs 1 1 ))))  ;;was(1 2 1)) )
           ;;end list, symbol-spec-lists
@@ -920,7 +932,7 @@ TESTXI-3-3 = ("TestX" (I 3 3) NIL NIL (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3))
                                          parse-dimlist1-p (parse-dimlist2-p T)
                                          subdims1-done-p subdims2-done-p
                                          all-node-tree-syms)
-       "U-CS-symbol-trees.lisp Makes one symbol tree from one sym-spec-list. Sets each symbol to a list (root dimlist nil subsym-list). sym-spec-list= (orig-root dim-spec-lists)  dim-spec-list= (n-dims n-items sublist)-Ns dimspec-sublists). RETURNS  (values all-node-tree-syms path-syms-by-levels new-subsyms new-subsym-strs  subdims1-done-p subdims2-done-p parse-dimlist1-p parse-dimlist2-p ). Makes node symbols eg XI-L-F, X9-2-3 . Sets  higher level symbols' value to subsyms. Works well on  node  trees. NO LONGER USED FOR PATHS."
+       "U-CS-symbol-trees.lisp Makes one symbol tree from one sym-spec-list. Sets each symbol to a list (root dimlist nil subsym-list). sym-spec-list= (orig-root dim-spec-lists)  dim-spec-list= (n-dims n-items sublist)-Ns dimspec-sublists). RETURNS  (values all-node-tree-syms path-syms-by-levels new-subsyms new-subsym-strs  subdims1-done-p subdims2-done-p parse-dimlist1-p parse-dimlist2-p ). Makes node symbols eg X-F-L-I, X9-2-3 . Sets  higher level symbols' value to subsyms. Works well on  node  trees. NO LONGER USED FOR PATHS."
    (let*
        ((orig-root (car sym-spec-list))
          (dim-spec-lists (second sym-spec-list))
@@ -982,11 +994,11 @@ TESTXI-3-3 = ("TestX" (I 3 3) NIL NIL (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3))
           (setf all-node-tree-syms (append all-node-tree-syms (list new-subsyms))))
         )
        ;;PATH SYM -- must find both sublist syms
-       ;;eg INPUT eg. (WUPI-L-FTOI-L-F  (\"Wup\" ((,*n-inputs  1 1)(1 3 1)(1 2 1   ) TO (,*n-outputs 1 1 (1 1 1   )(1 3 1 )))))
+       ;;eg INPUT eg. (WUP-F-L-I-TO-F-L-I  (\"Wup\" ((,*n-inputs  1 1)(1 3 1)(1 2 1   ) TO (,*n-outputs 1 1 (1 1 1   )(1 3 1 )))))
        (t     
 #|        (setf target-dim-n1 (list-length subdimspecs1)
               target-dim-n2 (list-length subdimspecs2) 
-              curdims *art-index-syms ;;(I L F M)
+              curdims *art-index-syms ;;(M F L I)
               n-artsyms (list-length *art-index-syms)
               n-dif (- n-artsyms target-dim-n1))                                 
                
@@ -1040,19 +1052,19 @@ TESTXI-3-3 = ("TestX" (I 3 3) NIL NIL (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3))
         ))
 ;;TEST
 ;;FOR CS
-;; (progn  (setf  almi-l-f-m '("alm" (i l f m))) (make-node-dimsym-tree '(almi-l-f-m) '("alm" ((3 1 1)(1 1 1 )(1 1 1)(1 1 1)))))
-;;works= ((ALMI-L-F-1) (ALMI-L-1-1) (ALMI-1-1-1) (ALM1-1-1-1 ALM2-1-1-1 ALM3-1-1-1))   NIL  NIL  NIL  NIL  NIL  NIL T
-;;also  ALMI-L-F-1 = ("alm" (I L F 1) NIL NIL (ALMI-L-1-1))
+;; (progn  (setf  almM-F-L-I '("alm" (M F L I))) (make-node-dimsym-tree '(almM-F-L-I) '("alm" ((3 1 1)(1 1 1 )(1 1 1)(1 1 1)))))
+;;works= ((ALMF-L-I-1) (ALMI-L-1-1) (ALMI-1-1-1) (ALM1-1-1-1 ALM2-1-1-1 ALM3-1-1-1))   NIL  NIL  NIL  NIL  NIL  NIL T
+;;also  ALMF-L-I-1 = ("alm" (I L F 1) NIL NIL (ALMI-L-1-1))
 ;;also  ALMI-1-1-1 = ("alm" (I 1 1 1) NIL NIL (ALM1-1-1-1 ALM2-1-1-1 ALM3-1-1-1))
 ;;also ALM2-1-1-1 = ("alm" (2 1 1 1) NIL NIL NIL)
 
 
 
 ;;ZZZZ
-;;  (progn (setf *out1 nil *out2 nil  INPUTI-L-F '("Input" (I L F) ))(make-node-dimsym-tree '(INPUTI-L-F) '("Input" ((5 1 1)(1 1 1 )(1 1 1)))))
+;;  (progn (setf *out1 nil *out2 nil  INPUT-F-L-I '("Input" (I L F) ))(make-node-dimsym-tree '(INPUT-F-L-I) '("Input" ((5 1 1)(1 1 1 )(1 1 1)))))
 ;;works= ((INPUTI-L-1) (INPUTI-1-1) (INPUT1-1-1 INPUT2-1-1 INPUT3-1-1 INPUT4-1-1 INPUT5-1-1))   NIL   NIL  3  0  NIL  NIL
 ;;  
-;; (make-node-dimsym-tree  '(XI-L-F)  '("X" ((5 1 1 )(3 1 1)(3 1 1 ))))
+;; (make-node-dimsym-tree  '(X-F-L-I)  '("X" ((5 1 1 )(3 1 1)(3 1 1 ))))
 ;; results= 
 ;;  ((XI-L-1 XI-L-2 XI-L-3) (XI-1-1 XI-2-1 XI-3-1) (X1-1-1 X2-1-1 X3-1-1 X4-1-1 X5-1-1) (X1-2-1 X2-2-1 X3-2-1 X4-2-1 X5-2-1) (X1-3-1 X2-3-1 X3-3-1 X4-3-1 X5-3-1) (XI-1-2 XI-2-2 XI-3-2) (X1-1-2 X2-1-2 X3-1-2 X4-1-2 X5-1-2) (X1-2-2 X2-2-2 X3-2-2 X4-2-2 X5-2-2) (X1-3-2 X2-3-2 X3-3-2 X4-3-2 X5-3-2) (XI-1-3 XI-2-3 XI-3-3) (X1-1-3 X2-1-3 X3-1-3 X4-1-3 X5-1-3) (X1-2-3 X2-2-3 X3-2-3 X4-2-3 X5-2-3) (X1-3-3 X2-3-3 X3-3-3 X4-3-3 X5-3-3))  NIL NIL NIL NIL NIL NIL T
 #|;;PPRINT
@@ -1078,10 +1090,10 @@ TESTXI-3-3 = ("TestX" (I 3 3) NIL NIL (TESTX1-3-3 TESTX2-3-3 TESTX3-3-3))
 
 ;;
 ;;  FOR NODE VARIABLES------------------------------------------
-;; (setf  YI-L-F  '("Y" (I L F)))
-;;  (make-node-dimsym-tree '(YI-L-F) '("Y" ((4 1 1 )(3 1 1)(3 1 1))))
+;; (setf  Y-F-L-I  '("Y" (I L F)))
+;;  (make-node-dimsym-tree '(Y-F-L-I) '("Y" ((4 1 1 )(3 1 1)(3 1 1))))
 #| returns = ((YI-L-1 YI-L-2 YI-L-3) (YI-1-1 YI-2-1 YI-3-1) (Y1-1-1 Y2-1-1 Y3-1-1 Y4-1-1) (Y1-2-1 Y2-2-1 Y3-2-1 Y4-2-1) (Y1-3-1 Y2-3-1 Y3-3-1 Y4-3-1) (YI-1-2 YI-2-2 YI-3-2) (Y1-1-2 Y2-1-2 Y3-1-2 Y4-1-2) (Y1-2-2 Y2-2-2 Y3-2-2 Y4-2-2) (Y1-3-2 Y2-3-2 Y3-3-2 Y4-3-2) (YI-1-3 YI-2-3 YI-3-3) (Y1-1-3 Y2-1-3 Y3-1-3 Y4-1-3) (Y1-2-3 Y2-2-3 Y3-2-3 Y4-2-3) (Y1-3-3 Y2-3-3 Y3-3-3 Y4-3-3))  NIL NIL NIL NIL NIL NIL T
-Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
+Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((Y-F-L-I)))
 ;;pprint
 ((YI-L-1 YI-L-2 YI-L-3)
  (YI-1-1 YI-2-1 YI-3-1)
@@ -1098,15 +1110,15 @@ Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
  (Y1-3-3 Y2-3-3 Y3-3-3 Y4-3-3))|#
 
 ;;SAMPLE VALUES at each level
-;;LEVEL 1:(TOP)  YI-L-F = ("Y" (I L F) NIL (YI-L-1 YI-L-2 YI-L-3))
+;;LEVEL 1:(TOP)  Y-F-L-I = ("Y" (I L F) NIL (YI-L-1 YI-L-2 YI-L-3))
 ;;LEVEL 2:  YI-L-1 = ("Y" (I L 1) NIL (YI-1-1 YI-2-1 YI-3-1))
 ;;LEVEL 3:(BOTTOM)  YI-3-1 = ("Y" (I 3 1) NIL (Y1-3-1 Y2-3-1 Y3-3-1 Y4-3-1))
 ;;
-;;  (progn (setf *out1 nil *out2 nil  INPUTI-L-F '("Input" (I L F) ))(make-node-dimsym-tree '(INPUTI-L-F) '("Input" ((5 1 1)(1 1 1 )(1 1 1)))))
+;;  (progn (setf *out1 nil *out2 nil  INPUT-F-L-I '("Input" (I L F) ))(make-node-dimsym-tree '(INPUT-F-L-I) '("Input" ((5 1 1)(1 1 1 )(1 1 1)))))
 ;;((INPUTI-L-1) (INPUTI-1-1) (INPUT1-1-1 INPUT2-1-1 INPUT3-1-1 INPUT4-1-1 INPUT5-1-1))  NIL NIL NIL NIL
-;; (progn (setf  *out1 nil)(make-node-dimsym-tree  '(XI-L-F)  '("X" ((5 1 1 )(3 1 1)(3 1 1 )))))
+;; (progn (setf  *out1 nil)(make-node-dimsym-tree  '(X-F-L-I)  '("X" ((5 1 1 )(3 1 1)(3 1 1 )))))
 ;; ((XI-L-1 XI-L-2 XI-L-3) (XI-1-1 XI-2-1 XI-3-1) (X1-1-1 X2-1-1 X3-1-1 X4-1-1 X5-1-1) (X1-2-1 X2-2-1 X3-2-1 X4-2-1 X5-2-1) (X1-3-1 X2-3-1 X3-3-1 X4-3-1 X5-3-1) (XI-1-2 XI-2-2 XI-3-2) (X1-1-2 X2-1-2 X3-1-2 X4-1-2 X5-1-2) (X1-2-2 X2-2-2 X3-2-2 X4-2-2 X5-2-2) (X1-3-2 X2-3-2 X3-3-2 X4-3-2 X5-3-2) (XI-1-3 XI-2-3 XI-3-3) (X1-1-3 X2-1-3 X3-1-3 X4-1-3 X5-1-3) (X1-2-3 X2-2-3 X3-2-3 X4-2-3 X5-2-3) (X1-3-3 X2-3-3 X3-3-3 X4-3-3 X5-3-3))  NIL NIL NIL NIL NIL NIL T
-;; X = ("X" ((9 1 1) (3 1 1) (3 1 1)) X-POINTS NIL (XI-L-F))
+;; X = ("X" ((9 1 1) (3 1 1) (3 1 1)) X-POINTS NIL (X-F-L-I))
 ;;XI-L-1 =  ("X" (I L 1) NIL NIL (XI-1-1 XI-2-1 XI-3-1))
 ;; pprint
 #|((XI-L-1 XI-L-2 XI-L-3)
@@ -1123,7 +1135,7 @@ Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
  (X1-2-3 X2-2-3 X3-2-3 X4-2-3 X5-2-3)
  (X1-3-3 X2-3-3 X3-3-3 X4-3-3 X5-3-3))|#
 ;; ((XI-L-3) (XI-3-3) (X1-3-3 X2-3-3 X3-3-3))
-;; (make-node-dimsym-tree  '(YI-L-F)  '("Y" ((3 1 1 )(1 3 1)(1 3 1 ))))
+;; (make-node-dimsym-tree  '(Y-F-L-I)  '("Y" ((3 1 1 )(1 3 1)(1 3 1 ))))
 ;; ((YI-L-3) (YI-3-3) (Y1-3-3 Y2-3-3 Y3-3-3))
 
 
@@ -1142,7 +1154,7 @@ Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
                                     new-subsyms new-subsym-strs)
   "In U-CS-symbol-trees.lisp  Sets new syms= symval lists (root dims nil subsyms) RETURNS (values new-subsyms new-subsym-strs  subdims1-done-p subdims2-done-p parse-dimlist1-p parse-dimlist2-p. Note: sym can be string or symbol. This is the workhorse of the new sym tree system. SYM-SPEC-LIST= (orig-root dim-spec-lists)  dim-spec-list= (n-dims n-items sublist)-Ns dimspec-sublists)."
   (let*
-      ((sym (my-make-symbol sym))
+      ((sym (my-make-cs-symbol sym))
        (symvals  (eval sym)) ;;eg (root dimlist place-for-subsyms)  ("X" (i l f))
        (topdims (second symvals))
        (target-dims)
@@ -1321,7 +1333,7 @@ Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
           ))
      
         (when subsym-str  ;;was subsym
-          (setf subsym (my-make-symbol subsym-str)
+          (setf subsym (my-make-cs-symbol subsym-str)
                 subsymvals (list orig-root  subsymdims nil nil) ;;didn't incl nil nil
                 new-subsym-strs (append new-subsym-strs (list subsym-str))
                 new-subsyms (append new-subsyms (list subsym)))
@@ -1365,23 +1377,23 @@ Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
      ))
 ;;TEST  
 ;;CURRENT FOR NODES ONLY ;;ZZZZ
-;; MUST define cells (eg INPUTI-L-F) first before testing.
-;; (make-node-dimsym-subtree 'INPUTI-L-F  '("Input" ((5 1 1)(1 1 1 )(1 1 1))))
-;; (make-node-dimsym-subtree  'XI-L-F '("TX" ((51 1 )(2 1 1)(2 1 1 ))) ) = ERRORS
-;; (make-node-dimsym-subtree  'XI-L-F '("TX" ((3 1 1 )(1 3 1)(1 3 1 ))))  = ERRORS
+;; MUST define cells (eg INPUT-F-L-I) first before testing.
+;; (make-node-dimsym-subtree 'INPUT-F-L-I  '("Input" ((5 1 1)(1 1 1 )(1 1 1))))
+;; (make-node-dimsym-subtree  'X-F-L-I '("TX" ((51 1 )(2 1 1)(2 1 1 ))) ) = ERRORS
+;; (make-node-dimsym-subtree  'X-F-L-I '("TX" ((3 1 1 )(1 3 1)(1 3 1 ))))  = ERRORS
 
-;; (PROGN (SETF *OUT1 NIL XI-L-F '("X" (I L F)) )(make-node-dimsym-subtree  'XI-L-F  '("X" ((5 1 1 )(3 1 1)(3 1 1 )))))
-;; (make-node-dimsym-subtree    'YI-L-F  '("Y" ((9 1 1) (3 1 1) (3 1 1))))
-;; (PROGN (SETF *OUT1 NIL AI-L-F-M '("A" (I L F M)) )(make-node-dimsym-subtree  'AI-L-F-M  '("A" ((5 1 1 )(3 1 1)(3 1 1 )(1 1 1)))))
-;;works= (AI-L-F-1)  ("AI-L-F-1") NIL  0  T  NIL
-;;also AI-L-F-1 =  ("A" (I L F 1) NIL NIL)
+;; (PROGN (SETF *OUT1 NIL X-F-L-I '("X" (I L F)) )(make-node-dimsym-subtree  'X-F-L-I  '("X" ((5 1 1 )(3 1 1)(3 1 1 )))))
+;; (make-node-dimsym-subtree    'Y-F-L-I  '("Y" ((9 1 1) (3 1 1) (3 1 1))))
+;; (PROGN (SETF *OUT1 NIL AM-F-L-I '("A" (M F L I)) )(make-node-dimsym-subtree  'AM-F-L-I  '("A" ((5 1 1 )(3 1 1)(3 1 1 )(1 1 1)))))
+;;works= (AF-L-I-1)  ("AF-L-I-1") NIL  0  T  NIL
+;;also AF-L-I-1 =  ("A" (I L F 1) NIL NIL)
 ;;
 ;; FOR NODE SYMBOLS ---------------------------------------------
 ;;  FOR LEVEL 1
-;;  (setf Xi-l-f '("X" (i l f))) = ("X" (I L F))
+;;  (setf X-F-L-I '("X" (i l f))) = ("X" (I L F))
 ;;
 ;; FOR NEXT LEVEL 2
-;; (make-dimsym-subtree 'Xi-l-f  '("x" ((5 1 1 )(3 1 1   "-" )(3 1 1 "-"))))
+;; (make-dimsym-subtree 'X-F-L-I  '("x" ((5 1 1 )(3 1 1   "-" )(3 1 1 "-"))))
 ;; works= (XI-L-1 XI-L-2 XI-L-3)   ("xI-L-1" "xI-L-2" "xI-L-3") NIL 0 T NIL
 ;;  also:   CL-USER 50 > XI-L-2  =  ("X" (I L F) NIL (XI-L-1 XI-L-2 XI-L-3))
 ;;
@@ -1499,14 +1511,14 @@ Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
     ))
 ;; SSS START HERE TESTING
 ;;TEST
-;;  (progn (setf *out3 nil)(find-bottom-art-instances 'wupi-l-ftoi-l-f))
-;; (find-bottom-art-instances 'RESETI-L-F) 
-;; works = (RESET1-2-2 RESET2-2-2 RESET3-2-2 RESET4-2-2 RESET5-2-2)   (RESETI-L-F RESETI-L-2 RESETI-2-2)  NIL
-;; ;; (find-bottom-art-instances 'wdnI-L-FTOI-L-F) ;;for ninputs=5 noutputs=3
+;;  (progn (setf *out3 nil)(find-bottom-art-instances 'WUP-F-L-I-TO-F-L-I))
+;; (find-bottom-art-instances 'RESETF-L-I) 
+;; works = (RESET1-2-2 RESET2-2-2 RESET3-2-2 RESET4-2-2 RESET5-2-2)   (RESETF-L-I RESETI-L-2 RESETI-2-2)  NIL
+;; ;; (find-bottom-art-instances 'WDN-F-L-I-TO-F-L-I) ;;for ninputs=5 noutputs=3
 ;; works= (WDN1-1-3TO1-3-2 WDN2-1-3TO1-3-2 WDN3-1-3TO1-3-2 WDN1-1-3TO2-3-2 WDN2-1-3TO2-3-2 WDN3-1-3TO2-3-2 WDN1-1-3TO3-3-2 WDN2-1-3TO3-3-2 WDN3-1-3TO3-3-2 WDN1-1-3TO4-3-2 WDN2-1-3TO4-3-2 WDN3-1-3TO4-3-2 WDN1-1-3TO5-3-2 WDN2-1-3TO5-3-2 WDN3-1-3TO5-3-2)      
-;;(WDNI-L-FTOI-L-F WDNI-L-FTOI-L-2 WDNI-L-FTOI-3-2 WDNI-L-FTO1-3-2 WDNI-L-3TO1-3-2 WDNI-1-3-TO1-3-2 WDNI-L-FTO2-3-2 WDNI-L-3TO2-3-2 WDNI-1-3-TO2-3-2 WDNI-L-FTO3-3-2 WDNI-L-3TO3-3-2 WDNI-1-3-TO3-3-2 WDNI-L-FTO4-3-2 WDNI-L-3TO4-3-2 WDNI-1-3-TO4-3-2 WDNI-L-FTO5-3-2 WDNI-L-3TO5-3-2 WDNI-1-3-TO5-3-2)
+;;(WDN-F-L-I-TO-F-L-I WDNF-L-ITOI-L-2 WDNF-L-ITOI-3-2 WDNF-L-ITO1-3-2 WDNI-L-3TO1-3-2 WDNI-1-3-TO1-3-2 WDNF-L-ITO2-3-2 WDNI-L-3TO2-3-2 WDNI-1-3-TO2-3-2 WDNF-L-ITO3-3-2 WDNI-L-3TO3-3-2 WDNI-1-3-TO3-3-2 WDNF-L-ITO4-3-2 WDNI-L-3TO4-3-2 WDNI-1-3-TO4-3-2 WDNF-L-ITO5-3-2 WDNI-L-3TO5-3-2 WDNI-1-3-TO5-3-2)
 ;;NIL
-;; (progn (setf *out3 nil)(find-bottom-art-instances 'wupI-L-FTOI-L-F))
+;; (progn (setf *out3 nil)(find-bottom-art-instances 'WUP-F-L-I-TO-F-L-I))
 
 
 
@@ -1524,7 +1536,7 @@ Y = ("Y" ((9 1 1) (3 1 1) (3 1 1)) Y-POINTS NIL ((YI-L-F)))
 (defun make-new-dim-symbol-types (symbol-spec-lists
                                     &key make-sublists-for-each-dim-p
                                     (set-global-vars-p T)  (return-flat-lists-p T)
-                                    (nest-indicator-string "To") nested-inner-list-size)
+                                    (path-indicator-string "To") nested-inner-list-size)
  "In U-CS-symbol-trees.lisp,  Returns new sequences of root, begin-str,dim-element,end-str for each value of dim-element from begin-n to n-dim-elements. RETURNS (values new-symbol-type-list  new-symbols-type-list-of-lists   new-symbol-type-spec-list-of-lists  new-root-list   new-symbol-type-symbol-string-list-of-lists  all-new-sym-names-flat-list  all-new-symbols-flat-list all-new-symdim-lists-flat-list).  INPUTS:  For SYMBOL-SPEC-LISTS, EACH symbol-spec-list= (ROOT all-dims-spec-list). ALL-DIMS-SPEC-LIST= (sublist1 sublist2 etc).  Each dim sublist =  (n-elements begin-n/or/cur-dim-n  dim-incr  begin-str end-str. Eg. (\"root\" '((4 1 1 \"C\" \"F\")(3 1 1 \"C\" \"F\"))).
 KEYS: If set-global-vars-p, sets global * versions of all return vars.  If return-flat-lists-p, then returns unnested lists instead of nested ones. NOTE: Nested-lists are nested by all Dim1 items together.  Use function resort-nested-lists for 2-level/2-dim nested lists with all Dim2 items in same list."
  (when set-global-vars-p
@@ -1570,7 +1582,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
      do
      (setf root (car symbol-spec-list)
            all-dims-spec-list (second symbol-spec-list)
-           root-sym (my-make-symbol root)
+           root-sym (my-make-cs-symbol root)
            dimspecs-n 0)
      ;;(afout 'out (format nil "dim-spec-list= ~A~%" dim-spec-list))
      ;;eg SingleDim (,nInputs ("Input" ((1 1)) "" ""))
@@ -1580,16 +1592,16 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
        ;;all-dims-spec-list=  ((3 1 1"")(1 3 1  "-")(1 1 1 "-"  ) (3  1 1  "To" )(1 1 1   "-")(1 2 1 "-"))
        ;;dimspecs= (3 1 1"")  or (1 3 1  "-") or  (3  1 1  "To" )
 
-      ;;If nest-indicator-string, find nested-inner-list-size
-     (when nest-indicator-string
+      ;;If path-indicator-string, find nested-inner-list-size
+     (when path-indicator-string
        (dolist (dimspecs all-dims-spec-list)
          (incf dimspecs-n) ;;first = 1
          (cond 
           ;;if  "To" is begin-str, uses N of same dimspecs
-          ((string-equal (fourth dimspecs) nest-indicator-string)
+          ((string-equal (fourth dimspecs) path-indicator-string)
            (setf nested-inner-list-size (car dimspecs)))
           ;;if  "To" is end-str, uses N of NEXT dimspecs
-          ((string-equal (fifth dimspecs) nest-indicator-string)
+          ((string-equal (fifth dimspecs) path-indicator-string)
            (setf nested-inner-list-size (car (nth dimspecs-n dimspecs))))   ;;next list      
         (t  NIL ))  ;;was (setf nested-inner-list-size nil)))
        ;;end  dolist,when
@@ -1658,11 +1670,11 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
 #|   (cond
      ;;If want to manually control the nested-inner-list-size
       (nested-inner-list-size
-       (set (my-make-symbol (format nil "~A-flat" root))   new-symbols-flat-list)
+       (set (my-make-cs-symbol (format nil "~A-flat" root))   new-symbols-flat-list)
        (set  root-sym  new-symbol-nested-lists))
       (t
        (set  root-sym  new-symbols-flat-list)
-       (set (my-make-symbol (format nil "~A-flat" root))  new-symbols-flat-list)))|#
+       (set (my-make-cs-symbol (format nil "~A-flat" root))  new-symbols-flat-list)))|#
 
      ;;end BIG OUTER symbol-spec-lists loop
      )
@@ -1765,7 +1777,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
          (new-symdim-flat-list)
          (return-lists '( *new-seq-nested-lists  *new-symbol-nested-lists *new-dim-list-nested-lists))  ;; *new-seq-flat-list))
          ;;added
-         (main-root-sym (my-make-symbol (format nil "~A" root)))
+         (main-root-sym (my-make-cs-symbol (format nil "~A" root)))
          )
   ;;CALL THE MAIN WORK FUNCTION          
    (multiple-value-setq (new-seq-nested-lists  new-symbol-nested-lists new-dim-list-nested-lists) ;;  new-seq-flat-list)
@@ -2018,7 +2030,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
      (when make-string-p      ;;was (or make-string-p  set-sym-to-list-p)
        (setf new-seq (format nil "~A~A~A~A" root  begin-str dim-element end-str))
        (when  (or make-symbol-p  set-sym-to-list-p)
-         (setf new-symbol (my-make-symbol new-seq)))
+         (setf new-symbol (my-make-cs-symbol new-seq)))
        (setf new-seq-list (append new-seq-list (list new-seq))
              new-symbol-list (append new-symbol-list (list new-symbol))))
 
@@ -2078,7 +2090,8 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
 ;;
 ;;ddd
 (defun make-artsyms-from-dims (rootstr dimslists 
-                                       &key superord-artsyms (node-separator *art-node-separator))
+                                       &key csformatp
+                                       superord-artsyms (node-separator *art-node-separator))
   "In U-CS-symbol-trees.lisp.  Makes a list of artsyms from dimslists (not dimspec-lists) eg. (I L 2) (3 2 2).  Also, appends list of superord-artsyms values to include these new artsyms. INPUT: Can be in form of  (I L F), ((I L F)), (((I L F)(I L F))), or (I L F TO I L F)  RETURNS (values newsym-list newsymstr-list) RETURNS (values newsym-list newsymstr-list). "
   (let
       ((newsym)
@@ -2107,12 +2120,14 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
 
      (when dims
        (multiple-value-setq (newsym newsymstr)
-            (make-dim-symbol rootstr dims))
+            (make-dim-symbol rootstr dims :csformatp csformatp))
+
        (setf newsym-list (append newsym-list (list newsym))
               newsymstr-list (append newsymstr-list (list newsymstr)))
        (set newsym (list rootstr dims nil nil))
        ;;end when
        )
+     ;;(break "dims")
 
      ;;end outer when, loop
      ))
@@ -2128,6 +2143,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
     ;;end let, make-artsyms-from-dims
     ))
 ;;TEST
+;; (make-artsyms-from-dims  "INPUT" '(((I L 1))((I L 2))))
 ;;  (make-artsyms-from-dims  "Wup" '(((I L 1)(I L 2))((I L 2)(I L 1))))
 ;; works=  (WUPI-L-1TOI-L-2 WUPI-L-2TOI-L-1)  ("WupI-L-1TOI-L-2" "WupI-L-2TOI-L-1")
 ;; also: WUPI-L-2TOI-L-1  = ("Wup" (I L 2 TO I L 1) NIL NIL)
@@ -2153,7 +2169,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
 (defun make-art-topsym (root dims &key (set-symvals-if-unbound-p T) 
                              value subsyms (art-index-syms *art-index-syms) 
                              value subsyms)
-  "In U-CS-symbol-trees.lisp. Makes a  topsym symbol eg. WUPI-L-FTOI-L-F and if it is unbound, sets it to symvals = (root dims nil default-value default-subsyms) if set-symvals-if-unbound-p. If already bound, returns OLD value and subsyms."
+  "In U-CS-symbol-trees.lisp. Makes a  topsym symbol eg. WUP-F-L-I-TO-F-L-I and if it is unbound, sets it to symvals = (root dims nil default-value default-subsyms) if set-symvals-if-unbound-p. If already bound, returns OLD value and subsyms."
   (let
       ((topsym)
        (symvals)
@@ -2188,11 +2204,11 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
     ))
 ;;TEST
 ;; (make-art-topsym "test" '(1 2 3) :value 0.66 :subsyms '(this that))
-;; works= TESTI-L-F  ("test" (I L F) NIL 0.66 (THIS THAT))  "testI-L-F"
+;; works= TESTF-L-I  ("test" (I L F) NIL 0.66 (THIS THAT))  "testF-L-I"
 ;; 
 ;; (make-art-topsym "test2d" '(1 2 3 to 4 5 6) :value 0.99 :subsyms '(this that))
-;; works= TEST2DI-L-FTOI-L-F  ("test2d" (I L F TO I L F) NIL 0.99 (THIS THAT))  "test2dI-L-FTOI-L-F" 
-;;also: TEST2DI-L-FTOI-L-F = ("test2d" (I L F TO I L F) NIL 0.99 (THIS THAT))
+;; works= TEST2DF-L-ITOF-L-I  ("test2d" (I L F TO I L F) NIL 0.99 (THIS THAT))  "test2dF-L-ITOF-L-I" 
+;;also: TEST2DF-L-ITOF-L-I = ("test2d" (I L F TO I L F) NIL 0.99 (THIS THAT))
 
 
 
@@ -2208,7 +2224,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
                                   (all-art-rootsyms *all-art-class-rootsyms)
                                   ;;not needed??(all-art-syms *all-art-symbols)
                                   )
-  "In U-CS-symbol-trees.lisp, RETURNS (values class-topsym n-dims path-var-p  n-dims1 n-dims2) (eg. XI-L-F or WUPI-L-FTOI-L-F) dim-specs-list required if sym is just the root str or sym."
+  "In U-CS-symbol-trees.lisp, RETURNS (values class-topsym n-dims path-var-p  n-dims1 n-dims2) (eg. X-F-L-I or WUP-F-L-I-TO-F-L-I) dim-specs-list required if sym is just the root str or sym."
   (let*
       ((symvals)
        (dims )
@@ -2234,7 +2250,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
       (setf class-topsym (make-dim-symbol sym dims)))
      ;;If sym is an unbound sym or root.
      ((or (stringp sym)(not (symbolp sym))(not (boundp sym)))
-      (setf sym (my-make-symbol sym)
+      (setf sym (my-make-cs-symbol sym)
             dims (make-top-dims-from-dimspecs dimspecs-list)
             class-topsym (make-dim-symbol sym dims)) )
      ;;for sym that evals to symvals
@@ -2256,7 +2272,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
                  topdims  (format nil "~{~a~^-~}" dims1 ))))
 
       (setf class-topsymstr (format nil "~A~A" rootstr topdims)
-            class-topsym (my-make-symbol class-topsymstr))
+            class-topsym (my-make-cs-symbol class-topsymstr))
       ;;  (BREAK "After setting dims w/ format")    
       ;;end t, cond
       ))
@@ -2265,13 +2281,13 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
     ;;end let, find-art-class-topsym
     ))
 ;;TEST
-;;  (find-art-class-topsym 'XI-2-2) = XI-L-F 3 NIL 0 0
+;;  (find-art-class-topsym 'XI-2-2) = X-F-L-I 3 NIL 0 0
 ;;  (find-art-class-topsym  'WUPI-3-2TOI-1-3) = 6 T 3 3
-;;  (find-art-class-topsym 'X '((5 1 1)(2 1 1)(3 2 1))) = XI-L-F 3 NIL 0 0
+;;  (find-art-class-topsym 'X '((5 1 1)(2 1 1)(3 2 1))) = X-F-L-I 3 NIL 0 0
 ;;  (find-art-class-topsym 'WUP  '((5 1 1)(2 1 1)(3 2 1) TO ((3 1 1)(2 1 1)(3 2 1))))
-;;  =  WUPI-L-FTOI-L-F  6 T 3 3
+;;  =  WUP-F-L-I-TO-F-L-I  6 T 3 3
 ;;   (find-art-class-topsym 'cc  '((4 1 1)(3 1 1)(2 1 1)(2 1 1))) 
-;; works = CCI-L-F-M  4  NIL  4  0
+;; works = CCM-F-L-I  4  NIL  4  0
 
 ;;Help
 ;; (format nil "~{~a, ~}" (list 1 2 3))
@@ -2313,7 +2329,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
      ;;((or (stringp sym)(not (symbolp sym))(not (boundp sym)))
      (t
       (setf  rootstr (find-best-match  sym all-art-rootstrs)
-             class-rootsym (my-make-symbol rootstr))))     
+             class-rootsym (my-make-cs-symbol rootstr))))     
 
     (cond
      ((boundp class-rootsym)
@@ -2329,13 +2345,13 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
     ))
 ;;TEST
 ;;  (find-art-class-rootsym 'XI-2-2) 
-;; works= X   ("X" ((5 1 1) (1 3 1) (1 3 1)) XI-L-3-POINTS NIL (XI-L-F))
+;; works= X   ("X" ((5 1 1) (1 3 1) (1 3 1)) X-3-L-I-points NIL (X-F-L-I))
 ;;  (find-art-class-rootsym  'WUPI-3-2TOI-1-3) 
-;; works= WUP    ("Wup" (((9 1 1) (1 3 1) (1 2 1)) TO ((5 1 1) (1 1 1) (1 3 1))) WUP-POINTS NIL (WUPI-L-FTOI-L-F))
+;; works= WUP    ("Wup" (((9 1 1) (1 3 1) (1 2 1)) TO ((5 1 1) (1 1 1) (1 3 1))) WUP-POINTS NIL (WUP-F-L-I-TO-F-L-I))
 ;;  (find-art-class-rootsym 'X '((5 1 1)(2 1 1)(3 2 1)))
-;; works= X  ("X" ((5 1 1) (1 3 1) (1 3 1)) XI-L-3-POINTS NIL (XI-L-F
+;; works= X  ("X" ((5 1 1) (1 3 1) (1 3 1)) X-3-L-I-points NIL (X-F-L-I
 ;;  (find-art-class-rootsym 'WUP  '((5 1 1)(2 1 1)(3 2 1) TO ((3 1 1)(2 1 1)(3 2 1))))
-;; works= WUP     ("Wup" (((9 1 1) (1 3 1) (1 2 1)) TO ((5 1 1) (1 1 1) (1 3 1))) WUP-POINTS NIL (WUPI-L-FTOI-L-F))
+;; works= WUP     ("Wup" (((9 1 1) (1 3 1) (1 2 1)) TO ((5 1 1) (1 1 1) (1 3 1))) WUP-POINTS NIL (WUP-F-L-I-TO-F-L-I))
 ;; MAKE NEW SYM
 ;;  (find-art-class-rootsym 'TEMP    '((5 1 1)(2 1 1)(3 2 1)) )
 ;;works= TEMP    ("TEMP" ((5 1 1) (2 1 1) (3 2 1)))
@@ -2376,7 +2392,7 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
 (defun make-top-dims-from-dimspecs (dimspecs-list
                                     &key (art-index-syms *art-index-syms)
                                   (node-separator *art-node-separator))
-  "In U-CS-symbol-trees.lisp, RETURNS (values (dims  n-dims  path-var-p  n-dims1 n-dims2) dims= a class top dimslist  (eg. (I L F) or (I L F M)."
+  "In U-CS-symbol-trees.lisp, RETURNS (values (dims  n-dims  path-var-p  n-dims1 n-dims2) dims= a class top dimslist  (eg. (I L F) or (M F L I)."
   (let 
       ((n-dims (list-length dimspecs-list))
        (path-sym-p (member node-separator dimspecs-list :test 'equal ))
@@ -2496,13 +2512,13 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
 ;;=================== INFO TEST AREA =================
 ;;
 ;;CURRENT RESULTS
-;; FOR WUPI-L-FTOI-L-F  SPEC= ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1))
+;; FOR WUP-F-L-I-TO-F-L-I  SPEC= ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1))
 ;;
-#|CL-USER 47 > (progn (setf *out1 nil *out2 nil  WUPI-L-FTOI-L-F '("Wup" (I L F TO I L F)))(make-node-dimsym-tree '(WUPI-L-FTOI-L-F) '("Wup" ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1)))))
+#|CL-USER 47 > (progn (setf *out1 nil *out2 nil  WUP-F-L-I-TO-F-L-I '("Wup" (I L F TO I L F)))(make-node-dimsym-tree '(WUP-F-L-I-TO-F-L-I) '("Wup" ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1)))))
 ;;RESULT
-((WUPI-L-FTOI-L-3)
- (WUPI-L-FTOI-1-3)
- (WUPI-L-FTO1-1-3 WUPI-L-FTO2-1-3 WUPI-L-FTO3-1-3) 
+((WUPF-L-ITOI-L-3)
+ (WUPF-L-ITOI-1-3)
+ (WUPF-L-ITO1-1-3 WUPF-L-ITO2-1-3 WUPF-L-ITO3-1-3) 
 (WUPI-L-2TO1-1-3) 
 (WUPI-3-2-TO1-1-3) 
 (WUP1-3-2TO1-1-3 WUP2-3-2TO1-1-3 WUP3-3-2TO1-1-3 WUP4-3-2TO1-1-3 WUP5-3-2TO1-1-3)
@@ -2515,17 +2531,17 @@ KEYS: If set-global-vars-p, sets global * versions of all return vars.  If retur
 NIL NIL 3 3 NIL NIL
 
 VALUES FOR EACH SYMBOL:---------------------------------------
-CL-USER 48 > WUPI-L-FTOI-L-F
-("Wup" (I L F TO I L F) NIL (WUPI-L-FTOI-L-3))
-CL-USER 49 > WUPI-L-FTOI-L-3
-("Wup" (I L F TO I L 3) NIL (WUPI-L-FTOI-1-3))
-CL-USER 50 > WUPI-L-FTOI-1-3
-("Wup" (I L F TO I 1 3) NIL (WUPI-L-FTO1-1-3 WUPI-L-FTO2-1-3 WUPI-L-FTO3-1-3))
-CL-USER 51 > WUPI-L-FTO1-1-3
+CL-USER 48 > WUP-F-L-I-TO-F-L-I
+("Wup" (I L F TO I L F) NIL (WUPF-L-ITOI-L-3))
+CL-USER 49 > WUPF-L-ITOI-L-3
+("Wup" (I L F TO I L 3) NIL (WUPF-L-ITOI-1-3))
+CL-USER 50 > WUPF-L-ITOI-1-3
+("Wup" (I L F TO I 1 3) NIL (WUPF-L-ITO1-1-3 WUPF-L-ITO2-1-3 WUPF-L-ITO3-1-3))
+CL-USER 51 > WUPF-L-ITO1-1-3
 ("Wup" (I L F TO 1 1 3) NIL (WUPI-L-2TO1-1-3))
-CL-USER 52 > WUPI-L-FTO2-1-3
+CL-USER 52 > WUPF-L-ITO2-1-3
 ("Wup" (I L F TO 2 1 3) NIL (WUPI-L-2TO2-1-3))
-CL-USER 53 > WUPI-L-FTO3-1-3
+CL-USER 53 > WUPF-L-ITO3-1-3
 ("Wup" (I L F TO 3 1 3) NIL (WUPI-L-2TO3-1-3))
 CL-USER 54 > WUPI-L-2TO1-1-3
 ("Wup" (I L 2 TO 1 1 3) NIL (WUPI-3-2-TO1-1-3))
@@ -2546,7 +2562,7 @@ CL-USER 59 > WUPI-3-2-TO3-1-3
 #|
 EG OF A 2-DIM ART TREE      I32TOI13
 
-            WUPI-L-FTOI-L-F SPEC= ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1))
+            WUP-F-L-I-TO-F-L-I SPEC= ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1))
              ILF TO ILF
     ILF TO IL3
     IL2TO IL3
@@ -2554,10 +2570,10 @@ EG OF A 2-DIM ART TREE      I32TOI13
     I32TO113  I32TO213  I32TO313
     132TO113 232TO213  332TO313 432TO113  532TO213  
 
-FOR:  WUPI-L-FTOI-L-F SPEC= ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1))
-((WUPI-L-FTOI-L-3)
- (WUPI-L-FTOI-1-3) 
- (WUPI-L-FTO1-1-3 WUPI-L-FTO2-1-3 WUPI-L-FTO3-1-3) 
+FOR:  WUP-F-L-I-TO-F-L-I SPEC= ((5 1 1)(1 3 1)(1 2 1) TO (3 1 1)(1 1 1)(1 3 1))
+((WUPF-L-ITOI-L-3)
+ (WUPF-L-ITOI-1-3) 
+ (WUPF-L-ITO1-1-3 WUPF-L-ITO2-1-3 WUPF-L-ITO3-1-3) 
  (WUPI-L-2TO1-1-3) 
     MISSING IS (WUPI-L-2TOI-L-3)
     MISSING IS (WUPI-3-2TOI-1-3)
@@ -2616,8 +2632,8 @@ S21=(I (3 1 1))
 S22=(L (1 1 1))
 S23=(F (1 3 1))
 STEP2:
-START WITH ROOT  I-L-FTOI-L-F
-1.replace S23, keep rest, (append all to I-L-FTOI-L-F)
+START WITH ROOT  F-L-ITOF-L-I
+1.replace S23, keep rest, (append all to F-L-ITOF-L-I)
 2.replace S13
 |#  
 
@@ -2896,7 +2912,7 @@ START WITH ROOT  I-L-FTOI-L-F
                                          parse-dimlist1-p (parse-dimlist2-p T)
                                          subdims1-done-p subdims2-done-p
                                          all-node-tree-syms)
-       "U-ART. Makes one symbol tree from one sym-spec-list. Sets each symbol to a list (root dimlist nil subsym-list).  RETURNS  (values all-node-tree-syms path-syms-by-levels new-subsyms new-subsym-strs  subdims1-done-p subdims2-done-p parse-dimlist1-p parse-dimlist2-p ). Either makes node symbols eg XI-L-F, X9-2-3 OR path symbols eg. WUPI-L-FTOI-L-F  WUP7-3-2TO4-1-3. Sets  higher level symbols' value to subsyms. Works well on both node & path trees (uses make-path-dimsym-tree). NO LONGER USED FOR PATHS."
+       "U-ART. Makes one symbol tree from one sym-spec-list. Sets each symbol to a list (root dimlist nil subsym-list).  RETURNS  (values all-node-tree-syms path-syms-by-levels new-subsyms new-subsym-strs  subdims1-done-p subdims2-done-p parse-dimlist1-p parse-dimlist2-p ). Either makes node symbols eg X-F-L-I, X9-2-3 OR path symbols eg. WUP-F-L-I-TO-F-L-I  WUP7-3-2TO4-1-3. Sets  higher level symbols' value to subsyms. Works well on both node & path trees (uses make-path-dimsym-tree). NO LONGER USED FOR PATHS."
    (let*
        ((orig-root (car sym-spec-list))
          (dim-spec-lists (second sym-spec-list))
@@ -2958,11 +2974,11 @@ START WITH ROOT  I-L-FTOI-L-F
           (setf all-node-tree-syms (append all-node-tree-syms (list new-subsyms))))
         )
        ;;PATH SYM -- must find both sublist syms
-       ;;eg INPUT eg. (WUPI-L-FTOI-L-F  (\"Wup\" ((,*n-inputs  1 1)(1 3 1)(1 2 1   ) TO (,*n-outputs 1 1 (1 1 1   )(1 3 1 )))))
+       ;;eg INPUT eg. (WUP-F-L-I-TO-F-L-I  (\"Wup\" ((,*n-inputs  1 1)(1 3 1)(1 2 1   ) TO (,*n-outputs 1 1 (1 1 1   )(1 3 1 )))))
        (t     
         (setf target-dim-n1 (list-length subdimspecs1)
               target-dim-n2 (list-length subdimspecs2) 
-              curdims *art-index-syms ;;(I L F M)
+              curdims *art-index-syms ;;(M F L I)
               n-artsyms (list-length *art-index-syms)
               n-dif (- n-artsyms target-dim-n1))                                 
                
@@ -3021,7 +3037,7 @@ START WITH ROOT  I-L-FTOI-L-F
                                     new-subsyms new-subsym-strs)
   "In U-ART.  Sets new syms= symval lists (root dims nil subsyms) RETURNS (values new-subsyms new-subsym-strs  subdims1-done-p subdims2-done-p parse-dimlist1-p parse-dimlist2-p. Note: sym can be string or symbol. This is the workhorse of the new sym tree system."
   (let*
-      ((sym (my-make-symbol sym))
+      ((sym (my-make-cs-symbol sym))
        (symvals  (eval sym)) ;;eg (root dimlist place-for-subsyms)  ("X" (i l f))
        (topdims (second symvals))
        (target-dims)
@@ -3247,7 +3263,7 @@ START WITH ROOT  I-L-FTOI-L-F
           )|#
 
         (when subsym-str  ;;was subsym
-          (setf subsym (my-make-symbol subsym-str)
+          (setf subsym (my-make-cs-symbol subsym-str)
                 subsymvals (list orig-root  subsymdims))
 
           (setf *out1 (append *out1 (list (format nil "IN INNER LOOP, subsymdims= ~A~%subsym= ~A, subsymvals= ~A~%" subsymdims     subsym   subsymvals))))
@@ -3307,7 +3323,7 @@ START WITH ROOT  I-L-FTOI-L-F
                                         (separator-str *art-index-separator)
                                          (index-syms *art-index-syms)
                                          all-node-tree-syms)
-       "U-ART. Makes one symbol tree from one sym-spec-list. Sets each symbol to a list (root dimlist nil subsym-list).  RETURNS  (values all-node-tree-syms  new-subsyms new-subsym-strs). MAKES ONLY node symbols eg XI-L-F, X9-2-3  Sets  higher level symbols' subsyms value to subsyms."
+       "U-ART. Makes one symbol tree from one sym-spec-list. Sets each symbol to a list (root dimlist nil subsym-list).  RETURNS  (values all-node-tree-syms  new-subsyms new-subsym-strs). MAKES ONLY node symbols eg X-F-L-I, X9-2-3  Sets  higher level symbols' subsyms value to subsyms."
    (let*
        ((orig-root (car sym-spec-list))
          (dim-spec-lists (second sym-spec-list))
@@ -3392,7 +3408,7 @@ START WITH ROOT  I-L-FTOI-L-F
                                     new-subsyms new-subsym-strs)
   "In U-ART.  Sets new syms= symval lists (root dims nil subsyms) RETURNS (values new-subsyms new-subsym-strs  subdims1-done-p subdims2-done-p parse-dimlist1-p parse-dimlist2-p. Note: sym can be string or symbol. This is the workhorse of the new sym tree system."
   (let*
-      ((sym (my-make-symbol sym))
+      ((sym (my-make-cs-symbol sym))
        (symvals  (eval sym)) ;;eg (root dimlist place-for-subsyms)  ("X" (i l f))
        (topdims (second symvals))
        (target-dims)
@@ -3527,7 +3543,7 @@ START WITH ROOT  I-L-FTOI-L-F
                                        new-index separator-str end-indecies-str))))
           
             (when subsym-str  ;;was subsym
-              (setf subsym (my-make-symbol subsym-str)
+              (setf subsym (my-make-cs-symbol subsym-str)
                     subsymvals (list orig-root  subsymdims))
 
               (setf *out1 (append *out1 (list (format nil "IN INNER LOOP, subsymdims= ~A~%subsym= ~A, subsymvals= ~A~%" subsymdims     subsym   subsymvals))))

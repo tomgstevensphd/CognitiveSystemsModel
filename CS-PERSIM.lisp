@@ -235,12 +235,23 @@ UPDATED-DATE
     :accessor scale-group-description
     :documentation "Scale-group-description--describes meaning, content etc of scale group category"
     ) 
+    (csartloc
+    :initarg :csartloc
+    :accessor csartloc
+    :initform NIL
+    :documentation "The csart location of the csym/cell"
+    )
     (scale-classes
     :initarg :scale-classes
     :accessor scale-classes
     :type :list
     :documentation "Subordinate (non-subscale) assessment/scale classes list"
     ) 
+   (subscales
+    :initarg :subscales
+    :accessor subscales
+    :documentation "List of scale subordinate or composite subscales ."
+    )
     (scale-instances
     :initarg :scale-instances
     :accessor scale-instances

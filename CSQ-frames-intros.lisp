@@ -2,6 +2,7 @@
 ;; COGNITIVE SYSTEMS QUESTIONNAIRE (CSQ)
 ;;
 
+
 ;; INTRODUCTORY CSQ INFORMATION, ETC FRAMES
 ;;
 ;; NEEDED DEFPARAMETERS
@@ -131,20 +132,24 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
        (sex-buttons-panel-inst)
        (CSQ-intro-inst)
        (usa-other-buttons-panel-inst)
+       (current-process (mp:get-current-process))
        )   
+    ;;SSSSSS START HERE -- MAKE OPTION OF TAKING SHAQ OR INCL PREVIOUS SHAQ DATA *SHAQ-ALL-DATA-LIST from saved SHAQ DATA FILE (eg. 1-2020-TOM-SHAQ-RESULTS-DATA.lisp)
+
     (loop
      for frame-arg-list in *CSQ-intro-info-frame-list
+     ;;((csq-intro-frame *csq-intro-title-text *csq-intro-text) (csq-permission-frame *csq-intro-title-text *permission-text))
      do
      (setf *CSQ-intro-title-text (eval (second frame-arg-list))
            *CSQ-intro-pane-text (eval (third frame-arg-list)))
      
-    ;;create the instance
-    (setf CSQ-intro-inst (make-instance 'CSQ-intro-interface))
-       
-    (capi:display CSQ-intro-inst)
-       (mp:current-process-pause 3600  'check-for-frame-visible)
-    ;;end loop
-    )
+     ;;create the instance
+     (setf CSQ-intro-inst (make-instance 'CSQ-intro-interface)
+           (slot-value CSQ-intro-inst    'calling-process) current-process)
+     (capi:display CSQ-intro-inst)
+     (mp:current-process-pause 360  'check-for-frame-visible)
+     ;;end loop
+     )
    ;; (sleep 2)
 
     ;;CREATE THE BIO-INFO FRAME AND PROCESS THE INFO
@@ -163,11 +168,12 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
                                 :background *req-pane-background
                                  :close-interface-on-selection-p NIL
                                  :font-size 10)|#
-
-        (setf bio-info-frame-inst (make-instance 'frame-bio-info
-                                          ;;args here
-                                        ;;  :title frame-name-text
-                                           ))
+    ;;CREATE BIO-INFO-FRAME-INST
+    (setf bio-info-frame-inst (make-instance 'frame-bio-info
+                                             ;;args here
+                                             ;;  :title frame-name-text
+                                             )
+          (slot-value bio-info-frame-inst 'calling-process) current-process)
         ;;modify the contents
 #|       (with-slots (sex-buttons-layout  usa-other-buttons-layout ) 
             bio-info-frame-inst|#
@@ -371,9 +377,9 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
        )
     ;;for use in callback
     (setf *qvar-category 'scalessel)
-    ;;EQUIVALENT *multi-selection-qvar-list used in callback and make-question-frame
+    ;;EQUIVALENT *multi-selection-qvarlist used in callback and make-question-frame
     ;; FOR ADDING TO *CSQ-DATA-LIST
-#|  (setf *multi-selection-qvar-list
+#|  (setf *multi-selection-qvarlist
   `(:QVAR-CATEGORY SCALESSEL :PRIMARY-QVAR-SYM "scalessel" :PRIMARY-QVAR-LABEL "scales-selected" :PRIMARY-TITLE-TEXT ,title :PRIMARY-INSTR-TEXT ,ans-instruction-text   :QNUM 1 :QUEST-TEXT-LIST (list ,question-text) :Q-SPSS-NAME NIL :ANS-NAME-LIST ,answer-array-list  :ANS-TEXT-LIST ,answer-array-list  :NUM-ANSWERS 23 :DATA-TYPE INTEGER :ANS-DATA-LIST (1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1) :PRIMARY-JAVA-VAR (nil) :PRIMARY-SPSS-MATCH nil :SPSS-MATCH-LIST nil :JAVA-VAR-LIST nil))|#
 #|   not needed??     (setf *call-CSQ-question-multi-callback-p T
               *single-selection-item NIL)|#
@@ -597,8 +603,8 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
 ;;FIND-SCALES-QVARS
 ;;
 ;;ddd
-(defun find-scales-qvars (scalename-list &key merge-qvar-lists-p)
-  "In CSQ-Frames-intros, RETURNS (values scales-qvars  class-inst-strings class-inst-objects) where scales-qvars= a list of (scale-sym scale-inst-string question-qvar-list).  If merge-qvar-lists-p, then merges all scale lists into ONE list, otherwise has separate lists (not currently used). Removes duplicate scales."
+(defun find-scales-qvars (scalename-list &key merge-qvarlists-p)
+  "In CSQ-Frames-intros, RETURNS (values scales-qvars  class-inst-strings class-inst-objects) where scales-qvars= a list of (scale-sym scale-inst-string question-qvarlist).  If merge-qvarlists-p, then merges all scale lists into ONE list, otherwise has separate lists (not currently used). Removes duplicate scales."
   (let
       ((scales-qvars) 
         (class-inst-objects) 
@@ -612,7 +618,7 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
      (multiple-value-bind (question-qvars class-inst-object class-inst-string)
          (find-scale-question-qvars scalename)
        (cond
-        (merge-qvar-lists-p
+        (merge-qvarlists-p
          (setf scales-qvars (append scales-qvars  question-qvars)))
         (t (setf scale-qvars (list scalename class-inst-string question-qvars)
             scales-qvars (append scales-qvars (list scale-qvars)))))
@@ -668,6 +674,9 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
 (defun go-next-frame-callback (data interface)
   "In CSQ-Frames-intros.lisp, POKES CSQ-process-manager running *CSQ-main-process to continue (run next frame)"
       (setf *go-to-previous-intro-frame nil)
+      (let*
+          ((calling-process (slot-value interface 'calling-process))
+           )
       ;; (show-text (format nil "In go-next-frame-callback, data= ~A interface= ~A~%*CSQ-main-process= ~A~%"      data interface *CSQ-main-process) 300 "From Go-next-frame")
       (show-text  (format nil "~%~%
                                   P L E A S E  W A I T:   S H A Q   I S   T H I N K I N G! ~%~%
@@ -683,7 +692,9 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     ) 350  "WAITING FOR CSQ?"  :min-width 500 :x 10 :y 10)
       (capi:destroy interface)
       (mp:process-poke *CSQ-main-process)
-     )
+      (mp:process-poke calling-process)
+      ;;end let,go-next-frame-callback
+     ))
 
 
 
@@ -734,6 +745,7 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
        (age)
        (length-user-id)
        (name)
+       (calling-process (slot-value interface 'calling-process))
        (ans-data-list)
      ;;  (qvar-str-list '("Name" "UserID" "Sex" "Age" "Email" "Nation" "HrsWork"))
        )
@@ -878,6 +890,7 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
         (setf *go-to-previous-intro-frame nil)
         (capi:destroy interface)
         ;;POKES CSQ-process-manager running *CSQ-main-process to continue (run next frame)
+        (mp:process-poke calling-process)
         (mp:process-poke *CSQ-main-process)
         ;;end data-ok-p, cond
        ;;WAS ))
@@ -1034,7 +1047,18 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
 ;;
 ;;ddd
 (capi:define-interface CSQ-intro-interface ()
-  ()
+  ((calling-process
+    :initarg :calling-process
+    :accessor calling-process
+    :initform nil
+    :documentation "calling-process")
+#|   (quest-num
+    :initarg :quest-num
+    :accessor quest-num
+    :initform nil
+    :type  :integer
+    :documentation "Question number")|#
+   )
   (:panes
    (top-rich-text-pane
     capi:rich-text-pane    :accepts-focus-p NIL
@@ -1251,7 +1275,7 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
        (instr-text "Use above menus to choose CSQ options: eg. which parts of CSQ to take and where to begin.")
        (q-text  "Type name or ID in box.")
        (pane1-text   "May leave blank.")
-       (pane1-title "Name (or ID):")                   
+       (pane1-title "ID [Save it!]:  ")                   
        )
     ;;(break "in frame")
        (make-text-input-frame title instr-text  q-text pane1-text
@@ -1419,6 +1443,11 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     :initform nil
     :type :list
     :documentation "Data from selected item")
+   (calling-process
+    :initarg :calling-process
+    :accessor calling-process
+    :initform nil
+    :documentation "calling-process")
    )
   (:PANES
    ;;TITLE-RICH-TEXT-PANE
@@ -2140,14 +2169,15 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
 
 ;; LATER DELETE ====================================
 ;;SSS START HERE TO INCORPORATE DATA INTO *CSQ-DATA-LIST
-;; from make-question-frame,  use *multi-selection-qvar-list used in callback
-;; EG of a *multi-selection-qvar-list for one question = 
+;; from make-question-frame,  use *multi-selection-qvarlist used in callback
+;; EG of a *multi-selection-qvarlist for one question = 
 #|(:QVAR-CATEGORY BIO4JOB :PRIMARY-QVAR-SYM "bio4job" :PRIMARY-QVAR-LABEL "b-Primary occupation" :PRIMARY-TITLE-TEXT "YOUR OCCUPATION" :PRIMARY-INSTR-TEXT "Select ALL that apply to you" :QNUM 1 :QUEST-TEXT-LIST NIL :Q-SPSS-NAME NIL :ANS-NAME-LIST ("student" "manager" "propeop" "protech" "consulta" "educator" "sales" "technici" "clerical" "service" "ownbus10" "othrsfem") :ANS-TEXT-LIST ("1-Student" "2-Manager" "3-People professional" "4-Technical professional" "5-Consultant" "6-Educator" "7-Sales" "8-Other technical" "9-Clerical" "10-Service" "11-Own business" "other" "13-Other" "spss-match" ("Other")) :NUM-ANSWERS 12 :DATA-TYPE INTEGER :ANS-DATA-LIST (1 1 1 1 1 1 1 1 1 1 1 1) :PRIMARY-JAVA-VAR ("bio4job") :PRIMARY-SPSS-MATCH "spss-match" :SPSS-MATCH-LIST ("spss-match" "spss-match" "spss-match" "spss-match" NIL "spss-match" "spss-match" "spss-match" "spss-match" "spss-match" "spss-match" "spss-match") :JAVA-VAR-LIST (("Student") ("Manager/executive") NIL ("Technician") ("Consultant") ("Educator") ("Sales") ("Technician") ("Clerical") ("Service") ("Own business +10 employees") (("Other self-employed"))))|#
 
 
 
 
-;;CSQ-CHOICE-INTERFACE
+;;CSQ-CHOICE-INTERFACE -- CHOOSE TEST, START-POINT, USER-DATA
+;;2019  
 ;;
 ;;ddd
 (capi:define-interface csq-choice-interface ()
@@ -2181,26 +2211,13 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     :accessor calling-process
     :initform NIL
     :documentation  "MP process from calling function/object.")
-   #|   (calling-instance
-    :initarg :calling-instance
-    :accessor calling-instance
-    :initform NIL
-    :documentation  "Calling interface instance. Use for capi:destroy?")
-    |#
    (poke-process
     :initarg :poke-process
     :accessor poke-process
     :initform NIL
     :documentation  "MP process to poke.")
-   #|
-   (close-calling-process-p
-    :initarg :close-calling-process-p
-    :accessor close-calling-process-p
-    :initform NIL
-    :documentation  "If  T, callback closes calling-process at end.")
-   |#
    )
-  (:panes
+  (:PANES
    (title-pane-1
     capi:title-pane
     :text "
@@ -2214,7 +2231,8 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     :internal-border 15)
    (radio-button-where-begin-panel
     capi:radio-button-panel
-    :items  *csq-step-button-strings
+    :items  *CSQ-STEP-BUTTON-STRINGS
+;;*only-view-csyms
     :layout-class 'capi:column-layout
     :internal-border 15
     :visible-min-width 300
@@ -2273,6 +2291,17 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     :background :yellow
     :font *font-title-times10b
     :internal-border 10)
+   ;;RESET-GLOBAL-CSYM-VARS-BUTTON
+   (reset-global-csym-vars-button
+    capi:push-button
+    :text "  Reset ALL global csym variable lists "         
+    :visible-min-height 15
+    :visible-min-width 300
+    :background :yellow
+    :callback-type :data-interface
+    :callback 'reset-global-csym-vars-callback
+    :data T
+    :internal-border 5)
    ;;NEW COMBOS BUTTON
    (make-new-combos-button
     capi:push-button
@@ -2282,6 +2311,7 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     :background :yellow
     :callback-type :data-interface
     :callback 'make-new-combos-callback
+    :data T
     :internal-border 5)
    (title-pane-4
     capi:title-pane)
@@ -2293,14 +2323,14 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     :font *go-frame-button-font  
     :visible-min-width 300
     :callback-type :data-interface
-    :callback 'go-csq-choices-callback
+    :callback 'GO-CSQ-CHOICES-CALLBACK
     )
    ;;end panes
    )
   (:layouts
    (column-layout-1
     capi:column-layout
-    '(title-pane-1  column-layout-2 column-layout-3 make-new-combos-button  row-layout-1 ))
+    '(title-pane-1  column-layout-2 column-layout-3 reset-global-csym-vars-button make-new-combos-button  row-layout-1 ))
    (column-layout-2
     capi:column-layout
     '( title-pane-begin-where radio-button-where-begin-panel
@@ -2318,14 +2348,15 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
    ;;end layouts
    )
   (:default-initargs
-   :visible-min-height 500
+   :visible-min-height 700
    :visible-min-width 360
    :internal-border 20
    :layout 'column-layout-1
    :background :red
+   :x 30  :y 50
    :title "CSQ CHOICES"))
 ;;TEST
-;; (run-csq-choice-interface)
+;; (run-csq-choice-interface T)
 
 
 ;;RUN-CSQ-CHOICE-INTERFACE
@@ -2335,15 +2366,19 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
   "In CSQ-Frames-intros.  Makes a csq-choice-interface instance and coordinates the programatic interactions between various other frames/callbacks"
   ;;reset to nil
   (setf *csq-previous-data-file NIL  *run-complete-csq-p NIL 
+               *initialize-csym-global-vars-p NIL
                *run-begin-with-find-pcs-p NIL  *csq-begin-step NIL
                *text-input-OR-button-interface-textdata NIL)
+  (when (null poke-process)
+    (setf poke-process (mp:get-current-process)))
+  ;;(break "before make-instance, poke-process")
   (let
       ((csq-choice-inst (make-instance 'csq-choice-interface
-                                       :poke-process (mp:get-current-process)))
+                                       :poke-process poke-process))  ;;this works,old (mp:get-current-process)))
        )
-
-    (capi:display csq-choice-inst)
-    
+  ;;NOTE MODIFY??:  *cs-explore-options = ("1. Explore ONE Cog System in DEPTH" "2. Do NOT explore any Cog Systems")
+  ;; *csq-load-user-data-options = ("1. Load last user data" "2. Start user data from beginning." "3. Load another user data source" "4. Load *Default-CSQ-userdata-path ")
+    (capi:display csq-choice-inst)   
     ;;not needed? (mp:current-process-pause 300)
     ;; (break "after callback poke")
      ;;should have been done by  (mp:process-poke *csq-main-process)) in callback
@@ -2362,7 +2397,7 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     ;;end let, run-csq-choice-interface
     ))
 ;;TEST
-;; (run-csq-choice-interface) 
+;; (run-csq-choice-interface NIL) 
 
 ;; when choose inter pathname, works; 
 ;;  *text-input-OR-button-interface-textdata  = "\"pathname here\""
@@ -2381,9 +2416,17 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
       ((begin-selection)
        (begin-step)
        (load-datafile-selection)
+       (close-this-process-p (slot-value interface 'close-this-process-p))
        )
+  ;;RESET GLOBAL SELECTION VARS 
+    (setf *run-complete-csq-p NIL  *run-begin-with-find-pcs-p NIL
+          *run-begin-with-load&view-data NIL 
+          *begin-csq-manager-store-data-p NIL
+          *begin-csq-manager-view-data-p NIL
+          *load&view-csym-data-p NIL
+          *INITIALIZE-USER-DATA-VARS-P NIL)          
     (cond
-     ((or (slot-value interface 'close-this-process-p)
+     ((or close-this-process-p
           *text-input-OR-button-interface-textdata)
       (setf  *csq-previous-data-file *text-input-OR-button-interface-textdata)
       ;;(break "or")
@@ -2392,10 +2435,11 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
       ;;;END AND POKE
       (when *run-csq-p 
         (mp:process-poke *csq-main-process)
-        ;;(BREAK "After poke and *run-csq-p in go-csq-choices-callback")
+        ;;SSSSSS LOOK UP SLOT FOR POKE-PROCESS IN INTERFACE
+        (mp:process-poke (slot-value interface 'poke-process))
+        (BREAK "After poke and *run-csq-p in go-csq-choices-callback")
         ;;note: *csq-main-process =  #<MP:PROCESS Name "CSQ MAIN PROCESS" Priority 0 State "Waiting for input">
-        )
-      
+        )   
       (when *run-shaq-p
         (mp:process-poke *shaq-main-process))
 
@@ -2411,76 +2455,157 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
               cs-explore
               (capi:choice-selected-item radio-button-cs-explore-panel)
               )
-        ;;(break "T")  
+        ;;(break "end T")  
 
         ;;FOR CHOOSING WHERE TO BEGIN CSQ
-        ;;initialize
+        ;;*csq-begin-step =  ("1. BEGINNING" "2. After Elements NAMED" "3. After COMPARING 3 elements at a time." "4. After RATING all values"  "5. Explore a Cognitive System in DEPTH" "6. Take ONLY SHAQ." "7. LOAD & VIEW previous data" "8. Only VIEW previous data")
+        ;;initialize/reset relevant global vars
         (setf  *text-input-OR-button-interface-textdata NIL
-               *run-complete-csq-p NIL
-               *run-begin-with-find-pcs-p NIL
-               *csq-begin-step NIL)
-
-        (cond
-         ((string-equal begin-selection (first  *csq-step-button-strings))
-          (setf *run-complete-csq-p T))
-         ((string-equal begin-selection (second  *csq-step-button-strings))
+               *run-complete-csq-p NIL ;;1
+               *run-complete-csq-NO-SHAQ-p NIL ;;2
+               *run-begin-with-find-pcs-p NIL ;;3
+               *run-begin-with-find-csvalues-p NIL  ;;4
+               *run-begin-with-find-csvalranks-p NIL ;;5
+               *run-begin-with-cs-explore-p NIL ;;6
+               *run-shaq-only-p NIL ;;7
+               *run-begin-with-load&view-data NIL ;;8
+               *load&view-csym-data-p NIL ;;9
+               *begin-csq-manager-store-data-p NIL ;;10
+               *begin-csq-manager-view-data-p NIL ;;11
+               )
+        (cond 
+         ((string-equal begin-selection (first  *csq-step-button-strings)) ;;1
+          (setf *run-complete-csq-p T *INITIALIZE-USER-DATA-VARS-P T))
+         ((string-equal begin-selection (second  *csq-step-button-strings)) ;;2
+          (setf *run-complete-csq-NO-SHAQ-p T 
+                *INITIALIZE-USER-DATA-VARS-P T))
+         ((string-equal begin-selection (third  *csq-step-button-strings)) ;;3
           (setf  *run-begin-with-find-pcs-p T))
-         ((string-equal begin-selection (third  *csq-step-button-strings))
+         ((string-equal begin-selection (fourth  *csq-step-button-strings)) ;;4
           (setf *csq-begin-step 'find-pc-values
                 *run-begin-with-find-csvalues-p T))
-         ((string-equal begin-selection (fourth  *csq-step-button-strings))
+         ((string-equal begin-selection (fifth  *csq-step-button-strings)) ;;5
           (setf *csq-begin-step 'find-csvalranks
                 *run-begin-with-find-csvalranks-p T))
-         ((string-equal begin-selection (fifth  *csq-step-button-strings))
-          (setf *csq-begin-step 'find-last
-                *run-begin-with-find-last-p T))
-         ((string-equal begin-selection (sixth  *csq-step-button-strings))
+         ((string-equal begin-selection (sixth  *csq-step-button-strings)) ;;6
           (setf *csq-begin-step 'cs-explore
                 *run-begin-with-cs-explore-p T))
-         (t  (setf *run-complete-csq-p T)))
+         ((string-equal begin-selection (seventh  *csq-step-button-strings)) ;;7
+          (setf *csq-begin-step 'run-shaq-only
+                *run-shaq-only-p T))
+         ((string-equal begin-selection (eighth  *csq-step-button-strings)) ;;8
+          (setf *csq-begin-step 'load-data
+                *run-begin-with-load&view-data T
+                *INITIALIZE-USER-DATA-VARS-P T ))
+         ((string-equal begin-selection (ninth *csq-step-button-strings)) ;;9
+          (setf *csq-begin-step 'load-data
+                *load&view-csym-data-p T))
+         ((string-equal begin-selection (nth 9 *csq-step-button-strings)) ;;10
+          (setf *csq-begin-step 'store-data
+                *begin-csq-manager-store-data-p T))
+         ((string-equal begin-selection (nth 10 *csq-step-button-strings)) ;;11
+          (setf *csq-begin-step 'view-data-only
+                *begin-csq-manager-view-data-p T))                   
+         (T  (setf *run-complete-csq-p T
+                   *INITIALIZE-USER-DATA-VARS-P T)))
 
         ;;FOR CHOOSING DATA FILE (If previous user who didn't complete it)
+        ;; *csq-load-user-data-options = '("1. Load last user data" "2. Start user data from beginning."  "3. Load *Default-CSQ-userdata-path " "4. SELECT another user data path " )  "In csq-choices frame")
         (setf *text-input-OR-button-interface-textdata nil)
         (cond
-         ((string-equal load-datafile-selection 
-                        (first *csq-load-user-data-options) )        
-          (setf  *csq-previous-data-file  *save-all-csq-data-file
-                 (slot-value interface 'close-this-process-p) T))
-         ((string-equal load-datafile-selection 
-                        (second *csq-load-user-data-options) )     
-          (setf  *csq-previous-data-file NIL
-                 (slot-value interface 'close-this-process-p) T))
+         ((string-equal  load-datafile-selection (first *csq-load-user-data-options))
+          (setf  *csq-previous-data-file  *CSQ-USER-DATA-PATH))
+                 ;;(slot-value interface 'close-this-process-p) T))
+         ((string-equal  load-datafile-selection (second *csq-load-user-data-options))
+          (setf *csq-previous-data-file nil
+                (slot-value interface 'close-this-process-p) T))
+         ((string-equal  load-datafile-selection (third *csq-load-user-data-options))
+          (setf *csq-previous-data-file *DEFAULT-CSQ-USERDATA-PATH
+                (slot-value interface 'close-this-process-p) T))
          ;;to GET pathname of saved user data
-         ((AND (string-equal load-datafile-selection 
-                             (third *csq-load-user-data-options))      
-               (null  *text-input-OR-button-interface-textdata ))
-          ;;User select previous data file (change later?? SSS
-          (multiple-value-setq (prevdata-realpath *csq-previous-data-file)
+         ((and (string-equal  load-datafile-selection 
+                                  (fourth *csq-load-user-data-options))
+               (null  *text-input-OR-button-interface-textdata))
+          ;;3A. SELECT CSQ DATA FILE
+          (multiple-value-bind (prev-csq-data-realpath previous-csq-datafile)
               (my-prompt-for-file "SELECT PREVIOUS DATA FILE"
-                                  :return-name-too-p T :load-file-p T))
-          ;;do below  :poke-process *csq-main-process))
+                                  :return-name-too-p T :load-file-p NIL)
+            (setf *csq-previous-data-file previous-csq-datafile)
+           ;;"C:\\3-TS\\LISP PROJECTS TS\\CogSysOutputs\\1 TOM-All-CSQ-DATA-2020-03-19 - Copy.lisp"
+            ;;SET THE CSQ-VARIABLES FROM FILE VARIABLES            
+            (multiple-value-bind ( new-elmsyms new-pcsyms)
+                (load-user-csq-data previous-csq-datafile)
+              #|depreciated(read-saved-csq-data *csq-previous-data-file :dirpath "")|#
+              (sleep 3)
+              ;;SSSSSS START--FIX :VAL/:RANK in loaded vars
+              ;;(break "CHECK  :VAL & :RANK ETC. *csq-previous-data-file")
+              ;;end mvbs
+              ))
+          ;;close choice popup
+          (capi:destroy interface)
 
-          ;;READ THE FILE
-          (read-saved-csq-data *csq-previous-data-file :dirpath "")
-          (sleep 3)           
+           ;;3B. SELECT SHAQ DATA FILE? ;;HERENOW
+           (setf *text-input-OR-button-interface-textdata NIL)
+           (unless *load&view-csym-data-p
+             (make-radio-button-choice-instance
+              :make-func-process (mp:get-current-process)
+              :title "DO YOU ALSO WANT TO USE PREVIOUS SHAQ RESULTS DATA?"  :info-text "   Previous SHAQ data makes the CS Network more thorough."
+              :choice-items (quote ("NO" "YES")))
+             (mp:current-process-pause 30) 
+             ;;end unless
+             )
+            ;;(break "*text-input-OR-button-interface-textdata")
+           (when (string-equal "YES" (car *text-input-OR-button-interface-textdata))
+             (multiple-value-bind (prev-shaq-data-realpath 
+                                   previous-shaq-data-file)
+                 (my-prompt-for-file "SELECT PREVIOUS DATA FILE"
+                                     :return-name-too-p T :load-file-p T)
+               (setf *shaq-previous-data-file previous-shaq-data-file)
+               ;;do below  :poke-process *csq-main-process))
+               ;;READ THE FILE
+               (load *shaq-previous-data-file)
+               (sleep 3)  
+               ;;end mvb,when
+               ))           
 
           ;;WHERE TO GO NEXT SET IN QUESTION 1          
-
+          ;;do in above callback (setf  *csq-previous-data-file 
+          )
+         ;;DO NOTHING--USE EXISTING DATA in stored global vars
+         ((string-equal  load-datafile-selection (fifth *csq-load-user-data-options))
+          NIL )
+         ;;for using *Default-CSQ-userdata-path
+         ((AND (or *run-begin-with-find-csvalranks-p
+                   *run-begin-with-load&view-data)
+               (null  *text-input-OR-button-interface-textdata ))
+          ;;READ THE FILE
+          (read-saved-csq-data *Default-csq-userdata-path :dirpath "")
+          (sleep 3)           
+          ;;WHERE TO GO NEXT SET IN QUESTION 1          
           ;;do in above callback (setf  *csq-previous-data-file 
           )
          (t NIL))
 
         ;;FOR CHOOSING TO EXPLORE A CS
+        ;; *cs-explore-options '("1. Explore ONE Cog System in DEPTH" "2. Do NOT explore any Cog Systems") "In csq-choices frame")
         (setf *text-input-OR-button-interface-textdata nil)
         (cond
-         ((string-equal cs-explore 
-                        (first *cs-explore-options) )        
-          (setf  *cs-explore-indepth-p T
-                 (slot-value interface 'close-this-process-p) T))
-         (t nil))
-        ;;end outer with-slots, T, cond
-        )))
+         ((string-equal cs-explore (second *cs-explore-options))
+          (setf  *cs-explore-indepth-p NIL))
+         ((or *run-complete-csq-p 
+              (string-equal cs-explore (second *cs-explore-options)))
+          (setf  *cs-explore-indepth-p T)
+          )
+         ;;If *cs-explore-indepth-p = T, this choice RESETS it to NIL
+         (T (setf  *cs-explore-indepth-p NIL)))
 
+          ;; If open data files, closed earlier above 
+          (when (capi:top-level-interface-display-state interface)
+            (capi:destroy interface))
+          ;;was (setf (slot-value interface 'close-this-process-p) T))
+          
+         ;;end outer with-slots, T, cond
+        )))
     ;;RUNS INSIDE RUN-CSQ-CHOICE-INTERFACE;  AND CLOSED BY IT  
     ;;USE IT TO PARTIALLY COORDINATE ALL THESE INTERFACES--CALLBACKS
     ;;MOVE TO NEXT STEP
@@ -2490,6 +2615,31 @@ This research study is conducted by Tom G. Stevens PhD. For questions regarding 
     ;;end  let, go-csq-choices-callback
     ))
 
+
+
+
+;;MAKE-NEW-COMBOS-CALLBACK
+;;
+;;ddd
+(defun make-new-combos-callback (data interface)
+  " Causes *use-existing-elmsym-combos set to NIL "
+  (when data
+    (setf *use-existing-elmsym-combos nil))
+  ;; don't close interface here
+  )
+
+
+;;RESET-GLOBAL-CSYM-VARS-CALLBACK
+;;2020
+;;ddd
+(defun reset-global-csym-vars-callback (data interface)
+  " Causes *use-existing-elmsym-combos set to NIL "
+  (when data
+    (setf *INITIALIZE-CSYM-GLOBAL-VARS-P T))
+  (format T "data= ~A" data)
+  (setf *resetx-data data)
+  ;; don't close interface here
+  )
 
 
 

@@ -1,9 +1,33 @@
-;;************************* CS-notes.lisp ***************************
-;;
 ;;******************* CS-NOTES.lisp ***********************************
+;;
 ;;NOTES FOR CS SYSTEMS AND CSQ QUESTIONNAIRES
 
+;;NEXT PROJECTS
+;; 1. FINISH GRAPHIC VISUALIZER -INCL VISUAL TANGLED TREES OF NODES-PATHS CREATED AUTOMATICALLY AFTER QUESTIONS OR WHENEVER.
 
+;;
+;; 2. WRITE NEXT CS EXPLORE STAGE (ISA, WHY, INSTANCE-OF, ETC)
+;; THAT 
+
+;;PROBLEM
+;; QUESTIONS LIKE ISA & OPPOSITE DON'T WORK WELL WITH A DUEL PC, EG. PRAGMATIC VS NOT-PRAG.  SHOULD ONLY CHOOSE ONE END FOR MOST OF THESE QUESTIONS.  OPPOSITE IS ALREADY DEFINED BY PC.
+
+
+;;2019-06-24
+;; LATER??  LEARN HOW TO CLICK ON A NETVIEWER BOX AND BRING UP ALL INFO AND/OR A NEW NET OF IT'S CONNECTIONS (A LA HOW CLASS BROWSER WORKS).
+
+
+
+
+
+
+
+
+
+
+
+;;xxx
+;;***OLDER until 2019-06 moved to 0-CogSys-OVERVIEW NOTES-incl ART-ACTR.lisp
 #|xxx
 ===========   SYSTEM TERMS =========================
 
@@ -20,23 +44,52 @@ PATH
 
 
 ;;xxx ===================== COG-BV-SYSTEMS =====================
+
+PSYCHOLOGICAL/COGNITIVE SYSTEM TERMS ---------------------------
+
 TOPBV
 WORLDVIEW
 SELF
 REFGROUPS
 KNOWBASE (Univ in head)
 
-SKILLS (SELFMAN INTERP  LEARN HEALTH ... see self-confid)
+SKILLS (SKLSYM) (Egs SELFMAN INTERP  LEARN HEALTH ... see self-confid)
+ 1. CONCRETE SKILLS (SKLCSYM)
+ 2. ABSTRACT SKILLS (SKLASYM)
 
-ELEMENTS (ELMSYMS) (Actual objects, people, groups, ??) Still is partly abstraction, but mostly sensory-related concrete. Should there be a distinction between abstract and concrete elements? FORMAT same as rest using csym.
 
-ACTIONS (Relatively concrete? actions by concrete objects, people, etc.) Should there be a distinction between levels of abstract vs concrete actions?   FORMAT same as rest using 
+WORLD SYSTEM TERMS ------------------------------------------------------------
+
+ELEMENTS-ENTITIES (ELMSYM) Actual ENTITIES, objects, people, groups, ??) Still is partly abstraction, but mostly sensory-related concrete. Should there be a distinction between abstract and concrete elements? FORMAT same as rest using csym 1. CONCRETE ENTITIES (ELMCSYM)
+ 2. ABSTRACT ENTITIES (ELMASYM)
+
+ACTIONS (ACTSYM) (Relatively concrete? actions by concrete objects, people, etc.) Should there be a distinction between levels of abstract vs concrete actions?   FORMAT same as rest using 
+  1. CONCRETE ACTIONS (ACTCSYM)
+  2. ABSTRACT ACTIONS (ACTASYM)
+
+EVENTS-EPISODES (EVTSYM) Interactions of elms, acts, in environs over defined time period)  "Episode" used more for behavioral description--eg theme, motives, etc.
+  1. CONCRETE EVENT (EVTCSYM)  Brief, limited, of specific concrete elms, acts, etc)
+  2. ABSTRACT EVENTS (EVTASYM)
+
+ENVIRONMENTS  (ENVSYM) Combinations of elms, acts, events, systems,etc
+  1. CONCRETE ENVIRONS (ENVCSYM)
+  2. ABSTRACT ENVIRONS (ENVASYM)
+
+SYSTEMS (SYS) Complex connections/relationships between ELMS
+  1. CONCRETE SYSTEMS (SYSCSYM)
+  2. ABSTRACT (SYSASYM)
+
+SSSSS START HERE WINDOWS FOR ELMS, ACTS, EVTS, ENVS?
+ WITH A SCHEME FOR CONNECTING THEM OR CLICKING TO GET A POPUP WITH INFO RE OTHER WINDOW, ETC.
+
+
+
 
 ;;xxx ========= CS SYSTEMS DISCOVERY METHODOLOGY =============
 
 ;;   PC:  WAY 2 ELMS ALIKE AND DIF FROM 3RD VS DIF
 ;;   HIGHER, SUP PCS: WHY? ISA/PARENT=> HIGHER-ORDER PCS, R HIER.
-;;   LOWER, SUB PCS:   HOW? CHILD, GOAL-INSTUMENT? ONE R IN R HIER => LOWER-ORDER PCS, 
+;;   LOWER, SUB PCS:   HOW? INSTANCE,CHILD, GOAL-INSTUMENT? ONE R IN R HIER => LOWER-ORDER PCS, 
 ;;   ENTITIES: = ELMS
 ;;   EVENTS:  COMPLEX INTERACTIONS OVER TIME, VIEWED/STORED FROM VARISOUS PERPECTIVES/LEVELS
 ;;   EPISODES: SIMILAR TO EVENTS, BUT DEFINE BEHAVIORALLY??
@@ -52,21 +105,22 @@ CS DEF LIST (Can "PC" be interchanged for "CS" in most situations. PC is used wh
 * The ART value (4th in symvals) is the csym.(can use setsymval etc on the BV-node symbol).
 
 CSYM evals to CSYMVALS = 
-          (csname  csphrase  csdata csart-loc csdef  keywords )
+          (csname  csphrase  csdata csartloc csdef  keywords )
 CSNAME (string) the symbol string for the meaning csphrase.
 CSPHRASE (string) The meaning phrase of the belief/value. For PCs writes a string of pole1 vs pole2 (eg. "hot vs cold")
 CSDATA (list) a list.  (value  etc--to be added?) Eg dif types of values etc)
-CSART-LOC: ART symbol whose symvals it is embedded in.
+CSARTLOC: ART symbol whose symvals it is embedded in.
+   [NOTE: for now eg ELM14-1-1-99 CS2-1-1-99 are not being accurately/systematically created. SSSS FIX ARTSYMS LATER?]
 CSDEF (string) definitions/expanded meanings
 
 xxx ======  CSQ DATA KEYWORDS =======================
 :INFO Misc info relating to the symnode
-:BIPATHS a list of pathlists to/from other nodes (eg. pole to/from element)
+:BIPATH a list of pathlists to/from other nodes (eg. pole to/from element)
   BIPATHLIST = FOR NON-PCs only 1 node: (node-sym (data))
-    [Note: PC :bipaths go to every elm, Each elm links to ONE pc pole]
+    [Note: PC :BIPATH go to every elm, Each elm links to ONE pc pole]
         FOR PCs [either or both poles can have links] 
-         eg. :bipaths ((pole1 nil (mother NIL))(pole1 nil (best-friend nil))(pole2 nil (father nil)))
-        FOR ELMS TO PCS:  :bipaths (("mother" NIL (TEST-PCSYM (POLE1) NIL))
+         eg. :BIPATH ((pole1 nil (mother NIL))(pole1 nil (best-friend nil))(pole2 nil (father nil)))
+        FOR ELMS TO PCS:  :BIPATH (("mother" NIL (TEST-PCSYM (POLE1) NIL))
 :TO a list of pathlists to other nodes eg.  (to-element ...)
   TOPATHLIST = ()
 :FROM  a list of pathlists from other nodes (eg pole from element)
@@ -77,13 +131,22 @@ xxx ======  CSQ DATA KEYWORDS =======================
   WFROMPATH = (  )
 ;;SUBITEMS WITHIN ABOVE KEYS
   :SUBITEM
-       (eg. *DBGOAL :BIPATHS (TENNIS NIL  :SUBITEM "win tourney")
+       (eg. *DBGOAL :BIPATH (TENNIS NIL  :SUBITEM "win tourney")
 
 ;;PATH SUBTYPES BASED UPON CS-EXPLORE QUESTIONS
-;; (STORE-IN-CSDBSYM  "*DGOAL" :BIPATHS '("TENNIS" NIL) :subitem "Win Tourney")
-;;works=(:BIPATHS (("TENNIS" NIL :SUBITEM "Win Tourney")))  *DGOAL  NIL   "testgetsetsym"  ("TENNIS" NIL :SUBITEM "Win Tourney")
-;;also works=  *DGOAL=> (:BIPATHS (("TENNIS" NIL :SUBITEM "Win Tourney"))) 
-;; meaning of above: CSDB is *DGOAL it is linked to a NODE="TENNIS". TENNIS IS linked to GOAL with subitem (subgoal)= "Win Touurney" TENNIS also has a :BIPATHS ((*DGOAL NIL :subitem "Win Tourney") etc)
+
+
+;;FIXED?? START HERE SSS  BIPATH PROBLEMS (:BIPATH  XXX) , SHOULD BE :BIPATH
+;;FIX THESE FUNCTIONS find-pcpole-elm-links  (MAKE-PC
+;;  ;; (make-pcsymval-lists   (make-pc 
+;;also? fix STORE-IN-CSDBSYM??
+
+
+
+;; (STORE-IN-CSDBSYM  "*DGOAL" :BIPATH '("TENNIS" NIL) :subitem "Win Tourney")
+;;works=(:BIPATH (("TENNIS" NIL :SUBITEM "Win Tourney")))  *DGOAL  NIL   "testgetsetsym"  ("TENNIS" NIL :SUBITEM "Win Tourney")
+;;also works=  *DGOAL=> (:BIPATH (("TENNIS" NIL :SUBITEM "Win Tourney"))) 
+;; meaning of above: CSDB is *DGOAL it is linked to a NODE="TENNIS". TENNIS IS linked to GOAL with subitem (subgoal)= "Win Touurney" TENNIS also has a :BIPATH ((*DGOAL NIL :subitem "Win Tourney") etc)
 
   (SEE CS-explore-questions.lisp for current list)
 
@@ -95,7 +158,7 @@ xxx ======  CSQ DATA KEYWORDS =======================
         3.1 IF PC EXISTS, LINK IT TO THIS PCSYM
         3.2 IF PC NOT EXIST,  Make NAME a pcsym and set to a pcsymlist with first INPUT as :description, etc.
 4. ADD DATA TO EACH PC in LINK
-    4.1 ADD DATA AND TYPE TO PCSYMLIST OF PC BEING EXPLORED (mostly under (:BIPATHS (:ISA (THISPC THATPC ..) 
+    4.1 ADD DATA AND TYPE TO PCSYMLIST OF PC BEING EXPLORED (mostly under (:BIPATH (:ISA (THISPC THATPC ..) 
     4.2 ADD DATA TO NEW/OLD PC ON OTHER END.
 5. LATER? Fill in missing parts (eg opposite pole, best pole, value rating, etc.)
 6. STORE IN MAIN PCSYMS DATABASE
@@ -106,7 +169,7 @@ xxx SSSSSS START HERE BUILDING NEW GRAPH NET MODEL
 2018-02 Added for graphing
 NODE:  POLE1 POLE2 CNTR (center=for connections affecting entire node)
   P1VARS, P2VARS, CNTVARS
-PATH:  INPUT, OUTPUT, BIPATHS  (INVARS, OUTVARS, BIVARS)
+PATH:  INPUT, OUTPUT, BIPATH  (INVARS, OUTVARS, BIVARS)
 EG:
   __________________
  | P1                                   
@@ -158,9 +221,9 @@ PATHLIST
 ;;ELMSYMVALS:  [in egs, A4 v notA,B7,etc are PCs]
 ;;The SYMBOL (eg mother) is set to the SYMVALS list. [When saved to a file, saved in form of a list with car=elmsym and second= elmsymvals.]
 ;;no name--use "mother"
-;;MOTHER=  ("MOTHER" "mother" ELM2-1-1-99 NIL NIL :BIPATHS (((MOTHER NIL (A4 (POLE2) NIL))) ((MOTHER NIL (B7 (POLE2) NIL))) ((MOTHER NIL (C0 (POLE2) NIL))))) 
+;;MOTHER=  ("MOTHER" "mother" ELM2-1-1-99 NIL NIL :BIPATH (((MOTHER NIL (A4 (POLE2) NIL))) ((MOTHER NIL (B7 (POLE2) NIL))) ((MOTHER NIL (C0 (POLE2) NIL))))) 
 ;;named 
-;; BEST-M-FRIEND =  ("BEST-M-FRIEND" "best-m-friend" ELM4-1-1-99 NIL "dave" :BIPATHS (((BEST-M-FRIEND NIL (A4 (POLE1) NIL))) ((BEST-M-FRIEND NIL (C0 (POLE1) NIL))) ((BEST-M-FRIEND NIL (D4 (POLE1) NIL))))) 
+;; BEST-M-FRIEND =  ("BEST-M-FRIEND" "best-m-friend" ELM4-1-1-99 NIL "dave" :BIPATH (((BEST-M-FRIEND NIL (A4 (POLE1) NIL))) ((BEST-M-FRIEND NIL (C0 (POLE1) NIL))) ((BEST-M-FRIEND NIL (D4 (POLE1) NIL))))) 
 ;;
 ;; 2. For Q-DATA such as "Value" questions, store data in 
 ;;  *CSQ-DATA-LIST, key= :ELMSYM-LISTS
@@ -174,7 +237,7 @@ PATHLIST
  (("A" "a vs not a" NIL "A" ("A" "1" PCSYM-VALQ "int" "Priority12" NIL 12 NIL NIL)) 
 ("B" "b vs not b" NIL "B" ("B" "2" PCSYM-VALQ "int" "Priority12" NIL 12 NIL NIL)) etc
 ;; PCSYM EVALS TO PCSYMVALS (eg =
-;; HAPPY2 => ("HAPPY2" "HAPPY vs UHAPPY" CS2-1-1-99 NIL NIL :PC ("HAPPY" "UHAPPY" 1 NIL) :POLE1 "HAPPY" :POLE2 "UHAPPY" :BESTPOLE 1 :BIPATHS ((POLE1 NIL MOTHER NIL) (POLE1 NIL BEST-F-FRIEND NIL) (POLE2 NIL FATHER NIL)) :CSVAL "1.000" :CSRANK "1" :XYLOC (100 100))
+;; HAPPY2 => ("HAPPY2" "HAPPY vs UHAPPY" CS2-1-1-99 NIL NIL :PC ("HAPPY" "UHAPPY" 1 NIL) :POLE1 "HAPPY" :POLE2 "UHAPPY" :BESTPOLE 1 :BIPATH ((POLE1 NIL MOTHER NIL) (POLE1 NIL BEST-F-FRIEND NIL) (POLE2 NIL FATHER NIL)) :va "1.000" :RNK "1" :XYLOC (100 100))
 
 xxx========== DATA DIMENSIONS --------------------------------
 1. ID/LOCATION INFO
@@ -355,6 +418,7 @@ PC LINK TYPES
 SSSSS START HERE--WORK ON MODEL (refer to Kelly, etc)
  THEN FUNCTIONS TO EXPLORE ONE PC
 
+***> DON'T TRY TO MODEL DETAILED CogSystems--instead USE SYMBOLS TO REPRESENT THEM IN CS NETWORKS (eg. as a PC represents a whole subsystem of connections not explicitly represented.  If the CS SYMBOL is a well-definced (eg dictionary, etc) common symbol, often don't need to elaborate it.  Otherwise project becomes overwhelmingly complex.
 
 ;;Explores Superordinate (up)-subordinate (down) relationships in hierarchies using:
 ;;   1. WHY to elaborate up and HOW to elaborate down relationships.
@@ -416,9 +480,9 @@ SET EACH TYPE TO A SYMBOL (Question Syms follow)
 
  WHAT TO DO WITH  ?? ALT-R OPPOSITE SYNONYM
 EG. ELMSYM of MOTHER=>
-("MOTHER" "mother" ELM2-1-1-99 NIL NIL :BIPATHS (((MOTHER NIL (CAREFOROTHERS (POLE1) NIL))) ((MOTHER NIL (INTIMATE (POLE1) NIL))) ((MOTHER NIL (FLEXIBLE (POLE1) NIL))) ((MOTHER NIL (CASUAL (POLE1) NIL))) ((MOTHER NIL (EGOTISTICAL (POLE2) NIL))) ((MOTHER NIL (EXUBERANT (POLE2) NIL))) ((MOTHER NIL (NOTTHEORIST (POLE1) NIL))) ((MOTHER NIL (LOVEX (POLE1) NIL))) ((MOTHER NIL (LOVEDANCE (POLE1) NIL))) ((MOTHER NIL (HELPINGCAREER (POLE2) NIL))) ((MOTHER NIL (HIGHIMPACT (POLE2) NIL)))))
+("MOTHER" "mother" ELM2-1-1-99 NIL NIL :BIPATH (((MOTHER NIL (CAREFOROTHERS (POLE1) NIL))) ((MOTHER NIL (INTIMATE (POLE1) NIL))) ((MOTHER NIL (FLEXIBLE (POLE1) NIL))) ((MOTHER NIL (CASUAL (POLE1) NIL))) ((MOTHER NIL (EGOTISTICAL (POLE2) NIL))) ((MOTHER NIL (EXUBERANT (POLE2) NIL))) ((MOTHER NIL (NOTTHEORIST (POLE1) NIL))) ((MOTHER NIL (LOVEX (POLE1) NIL))) ((MOTHER NIL (LOVEDANCE (POLE1) NIL))) ((MOTHER NIL (HELPINGCAREER (POLE2) NIL))) ((MOTHER NIL (HIGHIMPACT (POLE2) NIL)))))
 EG. PCSYM of  CAREFOROTHERS=>
-("CAREFOROTHERS" "CARE FOR OTHERS vs SELFISH" CS2-1-1-99 NIL NIL :PC ("CARE FOR OTHERS" "SELFISH" 1 NIL) :POLE1 "CARE FOR OTHERS" :POLE2 "SELFISH" :BESTPOLE 1 (:BIPATHS ((POLE1 NIL MOTHER NIL) (POLE1 NIL BEST-M-FRIEND NIL) (POLE2 NIL FATHER NIL))))
+("CAREFOROTHERS" "CARE FOR OTHERS vs SELFISH" CS2-1-1-99 NIL NIL :PC ("CARE FOR OTHERS" "SELFISH" 1 NIL) :POLE1 "CARE FOR OTHERS" :POLE2 "SELFISH" :BESTPOLE 1 (:BIPATH ((POLE1 NIL MOTHER NIL) (POLE1 NIL BEST-M-FRIEND NIL) (POLE2 NIL FATHER NIL))))
 
 
 LATER--FOR VERY LARGE INDIVIDUAL PERSON DATABASE
@@ -492,7 +556,7 @@ CS-EXPLORE STEPS:
 1. PRESENT CS-EXPLORE-QUESTIONS from CS-explore-questions.lisp;   output to: *CS-EXPLORE-DATALIST
 2. ASK TO NAME EACH INPUT ANSWER (VERBAL LABEL)
 3. Make NAME a pcsym and set to a pcsymlist with first INPUT as :description, etc.
-4. ADD IT AND TYPE TO PCSYMLIST OF PC BEING EXPLORED (mostly under (:BIPATHS (:ISA (THISPC THATPC ..) etc
+4. ADD IT AND TYPE TO PCSYMLIST OF PC BEING EXPLORED (mostly under (:BIPATH (:ISA (THISPC THATPC ..) etc
 5. LATER? Fill in missing parts (eg opposite pole, best pole, value rating, etc.)
 6. STORE IN MAIN PCSYMS DATABASE
 

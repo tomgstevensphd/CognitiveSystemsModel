@@ -1,37 +1,108 @@
 ;;******************************** CSQ-config.lisp ***************
 
+
+;;LOAD MY DATA?
+;;FOR LOADING MY DATA FILE
+(defparameter *selected-TOM-user-data  "C:/3-TS/LISP PROJECTS TS/CogSysOutputs/Tom-USE-AllData2019-10.lisp")
+
+
+;;===> LATER, STRAIGHTEN OUT EVAL ORDERS OF PARAMS &  
+;;APPEND-WHEN-BOUNDP-OR-LISTP
+;;2020
+;;ddd
+(defun append-when-boundp-or-listp (list &key incl-symbols-p append-list-list-p)
+  "CSQ-config [another copy in U-lists] Only appends items in list that are either a boundp symbol that evals to a list or is a listp itself. "
+   (let*
+       ((appended-list)
+        (rejected-items)
+        (evaled-symbol-result)
+        )
+  (loop
+   for item in list
+   do
+   (cond
+    ((listp item)
+     (cond
+      (append-list-list-p
+       (setf appended-list (append appended-list (list item))))
+      (t  (setf appended-list (append appended-list  item)))))
+    ((and (symbolp item)(boundp item))
+     (setf evaled-symbol-result (eval item))
+     (cond 
+      ((listp evaled-symbol-result)
+       (cond
+        (append-list-list-p
+         (setf appended-list (append appended-list (list evaled-symbol-result))))
+        (t  (setf appended-list (append appended-list evaled-symbol-result)))))
+      (incl-symbols-p
+       (cond
+        (append-list-list-p
+         (setf appended-list (append appended-list (list (list evaled-symbol-result)))))
+        (t (setf appended-list (append appended-list (list evaled-symbol-result))))))    
+      ;;end incl-symbols-p
+      (t (setf rejected-items (append rejected-items `(,item))))))
+    ;;end bound symbolp item
+    (t (setf rejected-items (append rejected-items `(,item)))))
+   ;;end loop
+   )
+   (values appended-list rejected-items)
+   ;;end let, append-when-boundp-or-listp
+   ))
+;;TEST
+;;SSSSSS START HERE FINISH, THEN LOAD ALL, FIX MOVE FUNCTION
+;; (SETF LIST1 '(1 2 3) LIST2 '(4 5 6)  sym1 'not-list)
+;; (append-when-boundp-or-listp '(list1 list3 list2 sym1 (a b c d) ))
+;; works =(1 2 3 4 5 6 A B C D)   (LIST3 SYM1)
+;; :INCL-SYMBOLS-P
+;; (append-when-boundp-or-listp '(list1 list3 list2 sym1 (a b c d) ) :incl-symbols-p T)
+;; works= (1 2 3 4 5 6 NOT-LIST A B C D)    (LIST3)
+;; :append-list-list-p
+;; (append-when-boundp-or-listp '(list1 list3 list2 sym1 (a b c d) ) :incl-symbols-p T :append-list-list-p T)
+;; ((1 2 3) (4 5 6) (NOT-LIST) (A B C D))   (LIST3)
+
+
 ;;QUESTIONNAIRE TO RUN
-(defparameter *run-CSQ-p  T "Useful in revised SHAQ functions to change input or processing that varies between questionnaires (SHAQ and CSQ).")
-(dEfparameter *run-SHAQ-p  NIL  "Useful in revised SHAQ functions to change input or processing that varies between questionnaires (SHAQ and CSQ). LATER POSSIBLE TO RUN BOTH QUESTIONNAIRES?")
+(defparameter *run-CSQ-p  T "Useful in revised SHAQ functions to change input or processing that varies between questionnaires (SHAQ and CSQ). 2019 ADDED SHAQ qvars and questions to other CSQ lists")
+(defparameter *run-only-CSQ-p  T "Useful in revised SHAQ functions to change input or processing that varies between questionnaires (SHAQ and CSQ).")
+(defparameter *run-SHAQ-p  NIL  "Useful in revised SHAQ functions to change input or processing that varies between questionnaires (SHAQ and CSQ). LATER POSSIBLE TO RUN BOTH QUESTIONNAIRES?")
 (defparameter *cur-data-list  '*csq-data-list )
  (when *run-SHAQ-p
-   (setf *cur-data-list '*shaq-data-list))
+   (setf *cur-data-list '*CSQ-DATA-LIST))
 (defparameter *CSQ-elmsym-lists  '( :ELMSYM-LISTS) "For supplemental CSQ information (eg. needed to restart CSQ at any point.")
 (defparameter *CSQ-pcxdata-list  '( :PCX-DATA) "For supplemental CSQ information (eg. needed to restart CSQ at any point.")
 (defparameter *CS-EXPLORE-DATALIST NIL "Used for CS-EXPLORE related function outputs") 
 (defparameter *cur-frame-namA-text  "Cognitive Systems Questionnaire (CSQ) QUESTIONS")
-;; CSQ QUESTIONS
+;; CSQ QVARS 
 (defparameter  *cur-scale-instr-text "")
-(defparameter *cur-qvar-lists  '*All-PC-element-qvars "Must eval later or caues problems. Alternative is *SHAQ-")
-(defparameter *cur-all-questions  '*All-PCE-elementQs "Must eval later or caues problems. Alternative is *SHAQ-")
+(defparameter *ALL-CSQ-QVARS  NIL "ALL CSQ and SHAQ qvars-set in CS-ART-init")
+(defparameter *ALL-CSQ-QVARLIST-SYMS  '(*All-PC-element-qvars  *SHAQ-question-variable-lists *ALL-CS-EXPLORE-QVARS) " ALL CSQ and SHAQ qvars-LISTS.  MUST BE EVALUATED to get actual list.")
+(defparameter *cur-qvarlists  '*ALL-CSQ-QVARS "Must eval later or caues problems")
+(defparameter *cur-all-questions-sym  '*ALL-CSQ-Questions "Must eval later or caues problems.")
 ;;*ALL-CSQ-QUESTIONS
-(defparameter *all-csq-questions  '*All-PCE-elementQs)
+(defparameter *ALL-CSQ-QUESTIONS NIL   "All CSQ and SHAQ QUESTIONS combined list")  ;;do later (append-when-boundp-or-listp '( *All-PCE-elementQs *All-CS-exploreQs *all-SHAQ-questions))
+(defparameter *ALL-CSQ-QUESTION-LIST-SYMS   '( *All-PCE-elementQs *All-CS-exploreQs *all-SHAQ-questions) "All CSQ and SHAQ QUESTION LISTS. MUST EVAL to get list of ALL CSQ QUESTIONS.")
+(defparameter  *MK-Q-FRAME-MULTI-INPUT-RESULTS NIL "For make-question-frame :multi-input results outputs")
 
 ;;IF *RUN-CSQ-P CHANGE FOLLOWING VARIABLES
 (when *run-csq-p 
   (setf *cur-frame-name-text "Cognitive Systems Questionnaire (CSQ) QUESTIONS"
         *cur-scale-instr-text "EXAMPLE>> Instructions: How IMPORTANT is this to you?"
-        *cur-qvar-lists '*all-PC-element-qvars
-        *cur-all-questions  *all-csq-questions))
+        *cur-qvarlists '*ALL-CSQ-QUESTION-LIST-SYMS
+        *cur-all-questions '*ALL-CSQ-QUESTION-LIST-SYMS))
 
-;;DOES IT MAKE NEW COMBOS FOR EACH PERSON OR USE A STANDARD SET 
-(defparameter  *use-existing-elmsym-combos T "Does CSQ make new combos for each person or use a standard set")
+(when *run-only-csq-p 
+  (setf *cur-frame-name-text "Cognitive Systems Questionnaire (CSQ) QUESTIONS"
+        *cur-scale-instr-text "EXAMPLE>> Instructions: How IMPORTANT is this to you?"
+        *cur-qvarlists '*all-PC-element-qvars
+        *cur-all-questions  *ALL-CSQ-QUESTION-LIST-SYMS ))
+
+
 
 ;;IF *RUN-SHAQ-P CHANGE FOLLOWING VARIABLES
 (when *run-shaq-p 
   (setf *cur-frame-name-text "Success and Happiness Questionnaire (SHAQ) QUESTIONS"
         *cur-scale-instr-text "EXAMPLE>> Instructions: How IMPORTANT is this to you?"
-        *cur-qvar-lists *SHAQ-question-variable-lists
+        *cur-qvarlists *SHAQ-question-variable-lists
         *cur-all-questions *all-shaq-questions))
 
 
@@ -40,7 +111,7 @@
 (defparameter *run-SHAQ-intros-p NIL)
 (defparameter *test-scale-list '()) ;; '(ssl3WritingSkills)) ;;'(ACAD-LEARNING));; '(scollege)) ;; )
 ;;OK-LIST '(BIO NO-SCALE BELIEFS OUTCOME VALUES-THEMES SKILLS-CONFIDENCE INTERPERSONAL ACAD-LEARNING CAREER-INTEREST)) 
-(defparameter *run-qvar-list NIL) ;; '(stmajgpa)) '(STURESID) ) ;;'(STURESOURCE)) ;; NIL ) ;;
+(defparameter *run-qvarlist NIL) ;; '(stmajgpa)) '(STURESID) ) ;;'(STURESOURCE)) ;; NIL ) ;;
 
   ;;Interface args
 (defparameter  *initial-x 20)
@@ -50,10 +121,11 @@
 (defparameter  *external-border 20)
 (defparameter *internal-border-width 25)
 (defparameter *fr-visible-min-width  960) 
-(defparameter *fr-visible-min-height 640)   ;; error :maximize)
+(defparameter *fr-visible-min-height 700)   ;; error :maximize)
 (defparameter *fr-border-color :red)
 (defparameter  *frame-title  "CSQ PART1: QUESTION")
 (defparameter *CSQ-frame-title  " Cognitive Systems Questionnaire (CSQ) " "Used on some intro frames?")
+(defparameter *text-input-frame-text-answers NIL "Used in Make-question-frame")
 
   ;;for multi-selection questions
 ;;(defparameter *default-multi-choice-title "MULTIPLE-SELECTION QUESTION"              "primary-title-text default text")
@@ -61,7 +133,7 @@
 (defparameter  *current-multi-selection-qnum 0)
   ;;pane args
   ;;title-rich-text-pane
-(defparameter *title-pane-height 40)
+(defparameter *title-pane-height 70) ;;was 40)
 (defparameter *title-pane-width nil)
 (defparameter *title-text-left-margin-spaces 20)
 (defparameter *title-pane-font-face nil)
@@ -83,7 +155,7 @@
                                              ;;  :relative-indent 1.0  ;;relative indent for rest of paragraphs
                                              ))   |#
   ;;instr-rich-text-pane
-(defparameter *instr-pane-height 70)
+(defparameter *instr-pane-height 90)
 (defparameter *instr-pane-width nil)
 (defparameter *instr-text-left-margin-spaces 7)
 (defparameter *instr-text-width (- *fr-visible-min-width 40))
@@ -164,23 +236,36 @@
 (defparameter *exit-CSQ-button-y  10)
 (defparameter *exit-CSQ-button-font(gp:make-font-description :family "times new roman" :size 10 :weight  :bold :slant :roman  :underline nil )) ;;  :color 
 
+;;NA-NONE-BUTTON
+(defparameter *na-none-button-output  "NA-NONE" "Currently optionally used in text-input-OR-button-interface")
+
 ;;yyy
    ;;left-button-filler-pane
 (defparameter *left-button-filler-pane-width 50)
 
 ;;FOR SHAQ CLASSES, SCALES, ETC
+(defparameter  *COMPARE-3ELMS-P NIL "SET TO T FOR finding PC's. Answer Panel INSTRS used when finding/making PC's")
 (defparameter *all-PCqvars NIL "This list of  pc qvar syms is created on the fly as users reveal PCs by make-pcqvar-quest function.")
-(defparameter *all-PCqvar-lists NIL "This list of pc qvar lists is created on the fly as users reveal PCs by make-pcqvar-quest function.")
+(defparameter *all-PCQVAR-LISTs NIL "This list of pc qvar lists is created on the fly as users reveal PCs by make-pcqvar-quest function.")
 (defparameter  *save-all-userdata-p  T "Appends *all-csq-user-data-lists with *csq-data-list  whenever initialization or reinitialization occurs (if exists) AND saves to file *save-all-userdata-p ")
 (defparameter  *save-all-userdata-after-find-elms  T "Saves to file *save-all-userdata-p")
+;;CSQ DATA PATHS
 (defparameter  *csq-save-all-dirpath "C:\\3-TS\\LISP PROJECTS TS\\CogSysOutputs\\" "Used by save-csq-data-to-file")
-(defparameter  *save-all-csq-data-file  "csq-output-temp.lisp" "Use with  *csq-save-all-dirpath")
+(defparameter  *CSQ-CSYMS-DATA-PATH "C:/3-TS/LISP PROJECTS TS/CogSysOutputs/CSQ-CSYMS-DATA.lisp" "DATED--Main file for storing ALL USER DATA-incl ALL CSYMS (elms, pc w/vals, links, and SHAQ if available." )
+(defparameter  *RAW-CSQ-DATA-PATH "C:/3-TS/LISP PROJECTS TS/CogSysOutputs/RAW-CSQ-DATA.lisp" "DATED--Main file for storing CSQ USER RAW DATA (elms, pc w/vals, links, NOT SHAQ DATA." )
+(defparameter  *RAW-SHAQ-DATA-PATH "C:/3-TS/LISP PROJECTS TS/CogSysOutputs/RAW-SHAQ-DATA.lisp" "DATED--Main file for storing SHAQ USER RAW DATA ." )
+(defparameter  *RAW-SHAQ-RESULTS-PATH "C:/3-TS/LISP PROJECTS TS/CogSysOutputs/RAW-SHAQ-RESULTS.lisp" "DATED--Main file for storing SHAQ USER RAW DATA ." )
+
+;;GLOBAL DATA VARS
 (defparameter *all-user-pcqvars  NIL "This list is appended when new *all-PCqvars are initialized, so will have an overall list of ALL PCSYMS-elements.")
 (defparameter *default-is-pc-p T "In setcsymval *default-is-pc-p causes..FINISH")
 ;;(defparameter
 ;;(defparameter
 
 ;;DATA LISTS =========================
+;;DATA FILES TO LOAD
+(defparameter *SHAQ-PREVIOUS-DATA-FILE NIL "Optional previous SHAQ data file to load--selected in menu") 
+(defparameter  *CSQ-PREVIOUS-DATA-FILE NIL "Optional previous CSQ data file to load--selected in menu")
 
 ;;FOR CSQ DATA SAVED IN FILES
 (defparameter  *ALL-CSQ-DATAFILE-VARS  '(*FILE-ALL-PC-ELEMENT-QVARS *FILE-ALL-PCQVAR-LISTS *FILE-CSQ-DATA-LIST *FILE-ELMSYMS *FILE-ELMSYMVALS *FILE-PCSYMS *FILE-PCSYMVAL-LISTS) "All global vars that are set when read and eval csq saved data files")
@@ -191,6 +276,8 @@
 (defparameter *FILE-ELMSYMVALS NIL)
 (defparameter *FILE-PCSYMS NIL)
 (defparameter *FILE-PCSYMVAL-LISTS NIL)
+(defparameter *file-all-csq-value-ranking-lists NIL)
+
 
 ;FOR THE TREEVIEW-FRAME
 (defparameter *csq-treeview-data-lists 
@@ -220,20 +307,30 @@
 ;;
 ;;SELECTION OF CSQ PARTS
 (defparameter *run-select-csq-parts-p T)
-(defparameter *run-complete-csq-p T)
-(defparameter *run-begin-with-find-pcs-p NIL)
-(defparameter *run-begin-with-find-csvalues-p NIL)
-(defparameter *run-only-write-elms-p NIL)          
-(defparameter *run-only-find-pcs-p NIL)
-(defparameter *run-only-find-csvalues-p NIL)
-(defparameter  *run-begin-with-find-csvalranks-p NIL)
-(defparameter  *run-begin-with-cs-explore-p NIL)
-(defparameter  *run-begin-with-find-last-p NIL)
+(defparameter *csq-begin-step NIL "Set in go-csq-choices-callback")
+(defparameter *run-complete-csq-p NIL "Set in go-csq-choices-callback")
+(defparameter *run-begin-with-find-pcs-p NIL "Set in go-csq-choices-callback")
+(defparameter *run-begin-with-find-csvalues-p NIL "Set in go-csq-choices-callback")
+(defparameter *run-only-write-elms-p NIL "Set in go-csq-choices-callback")          
+(defparameter *run-only-find-pcs-p NIL "Set in go-csq-choices-callback")
+(defparameter *run-only-find-csvalues-p NIL "Set in go-csq-choices-callback")
+(defparameter  *run-begin-with-find-csvalranks-p NIL "Set in go-csq-choices-callback")
+(defparameter  *run-begin-with-cs-explore-p NIL "Set in go-csq-choices-callback")
+(defparameter  *run-shaq-only-p NIL "Set in go-csq-choices-callback")
+(defparameter   *cs-explore-indepth-p NIL "Set in go-csq-choices-callback")
+(defparameter  *run-begin-with-load&view-data "Set in go-csq-choices-callback")
+(defparameter *begin-csq-manager-store-data-p "Set in go-csq-choices-callback")
+(defparameter *begin-csq-manager-view-data-p "Set in go-csq-choices-callback")
+;;(defparameter  *run-begin-with-find-last-p NIL)
 ;;
 ;;
 ;;MAIN DATA LISTS
+;;general/overall main lists
+(defparameter  *CSQ-DATA-LIST  NIL "SEE NOTES--REVISE data list of lists= (qvar :single q-text-sym q-num fr-answer-panel-sym num-answers  reversed-item-p scored-reverse-p ans-data-list) ans-data-list= (relval selected-item num-answers scored-reverse-p) or (mult-ans-list)REVISE THIS")
+(defparameter  *SHAQ-ALL-DATA-LIST  NIL "All SHAQ data results retreived from file where all saved SHAQ data was stored")
+;;more specific data related variables
+(defparameter  *pcsyms (unless (boundp '*pcsyms) NIL) "All user pcsyms")
 (defparameter  *all-csq-data-list-syms  '(*elmsyms *elmsymvals  *pcsyms  *pcsymval-lists  *csq-data-list *all-pc-element-qvars  *all-pcqvar-lists))
-(defparameter  *csq-data-list  nil "SEE NOTES--REVISE data list of lists= (qvar :single q-text-sym q-num fr-answer-panel-sym num-answers  reversed-item-p scored-reverse-p ans-data-list) ans-data-list= (relval selected-item num-answers scored-reverse-p) or (mult-ans-list)REVISE THIS")
 (defparameter  *all-user-csq-PCdata-lists  nil "For all users, appended whenever reinitilialized if *save-all-userdata-p and it exists.")
 (defparameter  *all-user-csq-PCXdata-lists  nil "For all users, appended whenever reinitilialized if *save-all-userdata-p and it exists.")
 (defparameter  *all-user-csq-elmdata-lists  nil "For all users, appended whenever reinitilialized if *save-all-userdata-p and it exists.")
@@ -286,12 +383,13 @@
 (defparameter  *cur-pc-scale-cats  '(PC-PEOPLE)  "Current PC categories to use in the SC PC questionnaire")  ;;PC-GROUPS
 (defparameter  *current-qvar nil "used to pass info to callbacks from CSQ-manager")
 (defparameter   *cur-pcqvar-n 0 "Used within list for making new pc qvars")
-(defparameter  *current-qvar-list nil "(qvar :single q-text-sym q-num fr-answer-panel-sym num-answers  reversed-item-p scored-reverse-p)")
+(defparameter  *current-qvarlist nil "(qvar :single q-text-sym q-num fr-answer-panel-sym num-answers  reversed-item-p scored-reverse-p)")
 (defparameter  *call-CSQ-question-single-callback-p nil "causes the make-my-vertical-button-panel callback function to call the CSQ append-my-vertical-button-panel-single-selection-callback")
 (defparameter  *call-CSQ-question-multi-callback-p nil "causes the make-my-vertical-button-panel callback function to call the CSQ append-my-vertical-button-panel-multi-selection-callback")
-(defparameter  *csval-key :csval "Key for value ratings (eg 0 to 1.0)")
+;;moved to cs-config
+;;(defparameter  *csvalkey :VA "Key for value ratings (eg 0 to 1.0)")
+;;(defparameter *csval-rank-key :RNK  "Within a given pc value rating, the rank compared to other values with same rating")
 (defparameter *pc-items-ratings-lists nil "For use in manage-value-rank-frames to make rank ratings within same value rating categories")
-(defparameter *csval-rank-key :csrank  "Within a given pc value rating, the rank compared to other values with same rating")
 (defparameter  *all-grouped-csval-ranks nil "Ranks of csvals with same rating groups")
 
 ;;
@@ -300,19 +398,23 @@
 
 
 
-;;CSQ-REINIT
+;;CSQ-REINIT  -- SSSS CHECK & REVISE??
 ;;
 ;;ddd
 (defun CSQ-reinit (&key use-test-qvars-p (unbind-csq-vars-p T)
+                        reload-userdata-file-p 
+                        (userdata-pathname *DEFAULT-CSQ-USERDATA-PATH)
                    (save-all-userdata-p *save-all-userdata-p))
-
+  "CSQ-config.  Used programatically to RESET ALL VARS & UNBIND ELM, PC, & USER-CREATED CSYMS, etc"
   ;;PCs for all users
   (append-all-user-datalists save-all-userdata-p)
 
   (when unbind-csq-vars-p
-    (makunbound-csqvars))
-
-  (csq-initialize :use-test-qvars-p use-test-qvars-p
+    (makunbound-csq-vars))
+  ;;here88
+  (csq-initialize :read-userdata-file-p reload-userdata-file-p
+                  :userdata-pathname userdata-pathname
+                  :use-test-qvars-p use-test-qvars-p
                   :if-elmsym-exists-reset-p T  :if-elmsym-exists-do-nothing-p NIL
                   :save-all-userdata-p save-all-userdata-p)
   ;;end CSQ-reinit
@@ -348,28 +450,39 @@
 ;;
 ;;ddd
 (defun CSQ-initialize ( &key use-test-qvars-p ;;*test-pc-element-qvars
+                             read-userdata-file-p userdata-pathname
                              (if-elmsym-exists-reset-p T)  (unbind-csq-vars-p T)
                              if-elmsym-exists-do-nothing-p  (save-all-userdata-p T))
-  "In CSQ-config If USE-TEST-QVARS-P, uses  *test-pc-element-qvars "
+  "In CSQ-config If USE-TEST-QVARS-P, uses  *test-pc-element-qvars 
+ =>DON'T USE IN DELIVER-- LOADED IN DELIVER FILE"
   ;;load files and defparameters -- SSS later move here?
-  ;;DON'T USE IN DELIVER -- INSTEAD LOADED IN DELIVER FILE
   (let
       ((elmsyms)
        (type-list)
        (catsyms *All-PC-elmsym-global-cats)
        )
-
+    ;;RELOAD KEY GLOBAL VARS, etc.
     (load "C:\\3-TS\\LISP PROJECTS TS\\CogSys-Model\\CS-config.lisp")
     (load "C:\\3-TS\\LISP PROJECTS TS\\CogSys-Model\\csq-elmsym-sel-combos.lisp")
     (load "C:\\3-TS\\LISP PROJECTS TS\\CogSys-Model\\CSQ-QVARS.lisp")
 
+   ;;INTITIALIZE COMBINED GLOBAL VARS
+   (unless *ALL-CSQ-QUESTIONS
+     (setf *ALL-CSQ-QUESTIONS (append-when-boundp-or-listp '( *All-PCE-elementQs *All-CS-exploreQs *all-SHAQ-questions))))
+
+   (unless *ALL-CSQ-QVARS
+     (setf *ALL-CSQ-QVARS (append-when-boundp-or-listp '(*All-PC-element-qvars *ALL-CS-EXPLORE-QVARS *SHAQ-question-variable-lists ))))
+
+   (when *INITIALIZE-CSYM-GLOBAL-VARS-P
+     (set-vars-to-value NIL '(*ALL-CSYMS *ALL-CSYMS&VALS  
+                                         *ALL-ELMSYMS  *ALL-ELMSYMS&VALS
+                                         *ALL-PCSYMS *ALL-PCSYMS&VALS
+                                         *ALL-CSARTLOC-SYMS *ALL-CSARTLOC-SYMS&VALS )))
+;;csq-reinit-p
     ;; OVERIDES *all-PC-element-qvars set to ALL QVARS when loaded CSQ-QVARS.lisp
     (when use-test-qvars-p
       (setf *all-PC-element-qvars *test-pc-element-qvars))
 
-
-  ;;HERE NOW 2
-    
   ;;SHOW-DETAILS?
   ;;used selectively for calling show-text to make containers
   (defparameter *show-details nil)
@@ -381,11 +494,10 @@
 
   ;;MAKUNBOUND ALL PREVIOUS VARIABLES?
   (when unbind-csq-vars-p
-    (makunbound-csqvars))
+    (makunbound-csq-vars))
 
   ;;INITIALIZE
   (init-main-csq-variables)
-
 
   ;;MAKE  ELMSYMS
   ;;Also sets eg *people-elmsyms to sublist of elmsyms
@@ -396,12 +508,18 @@
      do
     (multiple-value-setq (elmsyms  type-list)
         (make-elmsyms-from-qvars  (list cat) 
-                                  :if-exists-simple-reset-p if-elmsym-exists-reset-p
+                                  ::if-exists-reset-p if-elmsym-exists-reset-p
                                   :if-exists-do-nothing-p if-elmsym-exists-do-nothing-p))
 
     (setf  *all-elmsyms (append *all-elmsyms elmsyms))
     ;;set catsyms to elmsyms
     (set catsym elmsyms)
+    
+    (when (and read-userdata-file-p userdata-pathname)
+      (read-saved-csq-data userdata-pathname :set-csq-symbols-to-data-p T
+                           :eval-objects-p T)
+      (format T "==>> USER FILE DATA LOADED from: ~A " userdata-pathname)
+      )
     ;;end loop, when
     ))
 
@@ -437,19 +555,40 @@
         *all-elmsyms NIL))
 
 
-;;MAKUNBOUND-CSQVARS
+
+;;MAKUNBOUND-CSQ-VARS
 ;;
 ;;ddd
-(defun makunbound-csqvars (&key pcsyms-only-p elmsyms-only-p 
-                                (all-user-pcqvars  *all-user-pcqvars)
-                                (all-pcqvars *all-pcqvars)  
-                                (all-elmsyms *all-elmsyms))
+(defun makunbound-csq-vars (&key (all-csyms-p T)(all-csartloc-syms-p T)
+                                 pcsyms-only-p elmsyms-only-p
+                                 all-stored-csyms-only-p
+                                 (global-var-syms 
+                                  '((all-user-pcqvars  *all-user-pcqvars)
+                                    (all-pcqvars *all-pcqvars)  
+                                    (all-elmsyms *all-elmsyms)
+                                    (all-csyms *all-csyms)
+                                    (all-stored-csyms *all-stored-csyms)
+                                    (all-csartloc-syms *all-csartloc-syms)))
+                                 )
   "In CSQ-config, unbinds all pcsyms and/or elmsyms.  Default is all are made unbound.  Use key if want only one type." 
   (let
       ((varlist)
        )
-    ;;FOR PC SYMS
-    (when  (and (null elmsyms-only-p)
+    ;;1. Check to see if global vars are bound & set lists [sets to NIL if unbound]
+    (loop
+     for list in global-var-syms
+     do
+     (let*
+         ((local-sym (car list))
+          (global-sym (second list))
+          (symvals (cond ((boundp global-sym) (eval global-sym))
+                         (t nil)))
+          )
+       (set local-sym symvals)
+       ;;end let,loop
+       ))
+    ;;2. FOR PC SYMS
+    (when  (and (null elmsyms-only-p)(null all-stored-csyms-only-p)
                 all-user-pcqvars (listp all-user-pcqvars))
       (loop
        for item in all-user-pcqvars
@@ -462,41 +601,30 @@
        ;;end loop, when
        ))
     ;;FOR ELMSYMS
-     (when (and (null pcsyms-only-p) all-elmsyms (listp all-elmsyms))
+     (when (and (null pcsyms-only-p)(null all-stored-csyms-only-p)
+                all-elmsyms (listp all-elmsyms))
         (loop
          for elmsym in all-elmsyms
          do
          (setf varlist (append varlist (list elmsym)))
          ))
-#|  old, didn't work
-    (when  (null elmsyms-only-p)
-      (cond
-       ((and all-user-pcqvars (listp (caar all-user-pcqvars)))
-        (loop
-         for user-pcqvars in all-user-pcqvars
-         do
-        (setf varlist (get-all-nths-in-lists 0 all-user-pcqvars)))
-        )
-       (*all-pcqvars (get-all-nths-in-lists 0 all-pcqvars))))|#
+     ;;FOR STORED-CSYMS
+     (when (and (null pcsyms-only-p) 
+                all-stored-csyms (listp all-stored-csyms))
+       (setf varlist (append varlist all-stored-csyms)))
+     ;;FOR ALL-CSYMS
+     (when all-csyms-p
+       (setf varlist (append varlist all-csyms)))
+     ;;FOR ALL-CSARTLOC-SYMS
+     (when all-csartloc-syms-p
+       (setf varlist (append varlist all-csartloc-syms)))
 
-#|    (when (null pcsyms-only-p)
-      (cond 
-       ((and varlist (listp (caar varlist)))
-        (loop
-         for list in varlist
-         do
-         (setf varlist (append varlist (get-all-nths-in-lists 0 all-elmsyms)))
-         ))
-       (varlist
-        (setf varlist (append varlist (get-all-nths-in-lists 0 all-elmsyms))))
-       (t (setf varlist (append varlist (get-all-nths-in-lists 0 all-elmsyms)))))
-      )|#
       ;;(break)
-       (makunbound-vars  varlist  :convert-strings-p T)
-  
+      ;;MAKUNBOUND-VARS
+       (makunbound-vars  varlist  :convert-strings-p T) 
        varlist
-    ;;end let, makunbound-csqvars
+    ;;end let, makunbound-csq-vars
     ))
 ;;TEST
-;; (makunbound-csqvars)
+;; (makunbound-csq-vars)
                                 
